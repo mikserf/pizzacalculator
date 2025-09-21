@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Removing number input spinners */
+input[type="number"] { 
+  -moz-appearance: textfield; 
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Custom styling for the range slider */
+.pizza-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 5px;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.pizza-slider:hover {
+  opacity: 1;
+}
+
+.pizza-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: #EA580C;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.pizza-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: #EA580C;
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
