@@ -69,3 +69,12 @@ input::-webkit-inner-spin-button {
 .dark .pizza-slider::-moz-range-thumb {
   background: #fb923c;
 }
+
+/* Horizontal scroll utility for chip lists */
+.horizontal-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
