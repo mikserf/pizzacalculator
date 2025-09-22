@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PizzaState } from '../types/pizza';
 
 interface CalculatorControlsProps {
@@ -17,6 +17,8 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
   const handlePizzaSliderChange = (value: number) => {
     onUpdate({ numPizzas: value });
   };
+
+  const [showFrictionInfo, setShowFrictionInfo] = useState(false);
 
   return (
     <div className="controls space-y-8">
@@ -114,16 +116,35 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         <label htmlFor="roomTemp" className="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
           Room Temperature (°C)
         </label>
-        <select
+        <div
           id="roomTemp"
-          value={state.roomTemp}
-          onChange={(e) => onUpdate({ roomTemp: parseInt(e.target.value, 10) })}
-          className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
+          className="flex gap-2 overflow-x-auto horizontal-scroll py-2"
+          role="listbox"
+          aria-label="Room Temperature"
         >
-          {Array.from({ length: 8 }, (_, i) => i + 19).map(temp => (
-            <option key={temp} value={temp}>{temp}°C</option>
-          ))}
-        </select>
+          {Array.from({ length: 8 }, (_, i) => i + 19).map((temp) => {
+            const selected = state.roomTemp === temp;
+            return (
+              <button
+                key={temp}
+                type="button"
+                role="option"
+                aria-selected={selected}
+                aria-pressed={selected}
+                onClick={() => onUpdate({ roomTemp: temp })}
+                className={[
+                  "px-4 py-2 rounded-full border whitespace-nowrap select-none",
+                  "min-w-[64px] text-center font-semibold",
+                  selected
+                    ? "bg-orange-600 text-white border-orange-600"
+                    : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600",
+                ].join(" ")}
+              >
+                {temp}°C
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-300 dark:border-gray-600">
@@ -168,9 +189,22 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           />
         </div>
         <div>
-          <label htmlFor="frictionFactor" className="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
-            Mixer Friction Factor
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label htmlFor="frictionFactor" className="block text-sm font-semibold text-gray-600 dark:text-gray-300">
+              Mixer Friction Factor
+            </label>
+            <button
+              type="button"
+              aria-label="What is mixer friction?"
+              onClick={() => setShowFrictionInfo(true)}
+              className="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                <path d="M11.25 11.25a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75H12a.75.75 0 0 1-.75-.75v-4.5ZM12 6.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z" />
+                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm9.75-8.25a8.25 8.25 0 1 0 0 16.5 8.25 8.25 0 0 0 0-16.5Z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
           <input
             type="number"
             id="frictionFactor"
@@ -181,6 +215,62 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           />
         </div>
       </div>
+      {showFrictionInfo && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="friction-info-title"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+        >
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowFrictionInfo(false)} />
+          <div className="relative w-full sm:max-w-lg bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 rounded-t-2xl sm:rounded-2xl p-6 sm:p-8 shadow-xl m-0 sm:m-4">
+            <div className="flex items-start justify-between gap-4">
+              <h2 id="friction-info-title" className="text-lg sm:text-xl font-bold">What is Mixer Friction? 🤔</h2>
+              <button
+                type="button"
+                aria-label="Close"
+                onClick={() => setShowFrictionInfo(false)}
+                className="inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                  <path fillRule="evenodd" d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+            <div className="mt-4 space-y-4 text-sm leading-6">
+              <p>Think of it like rubbing your hands together to warm them up. When you mix dough, the friction between the dough, hook, and bowl creates heat. The Mixer Friction Factor is just a number that tells you how much heat your specific mixer creates.</p>
+              <div>
+                <h3 className="font-semibold">Why Does It Matter?</h3>
+                <p>Yeast is picky about temperature. Controlling your final dough temperature is the secret to perfect fermentation and predictable results every time you bake. By knowing your friction factor, you can adjust your water temperature perfectly to hit that "sweet spot" for your dough.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">How to Find Your Friction Factor (One-Time Test)</h3>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li><span className="font-semibold">Measure Temps</span>: Before mixing, get the temperature of your Room, Flour, and Water.</li>
+                  <li><span className="font-semibold">Mix</span>: Make your dough as you normally would.</li>
+                  <li><span className="font-semibold">Final Dough Temp</span>: As soon as it's done mixing, take the temperature of the dough.</li>
+                </ul>
+                <div className="mt-3">
+                  <h4 className="font-semibold">Calculate</h4>
+                  <p>Use this simple formula:</p>
+                  <div className="mt-2 p-3 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-200 font-semibold">
+                    Friction Factor = (3 × Final Dough Temp) − (Room Temp + Flour Temp + Water Temp)
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowFrictionInfo(false)}
+                className="px-4 py-2 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-700"
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
