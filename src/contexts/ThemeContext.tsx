@@ -27,6 +27,21 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    
+    // Update theme-color meta tag for iOS Safari status bar
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]:not([media])') || 
+                          document.querySelector('meta[name="theme-color"]');
+    
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute('content', isDark ? '#111827' : '#F8F7F4');
+    } else {
+      // Create meta tag if it doesn't exist
+      const meta = document.createElement('meta');
+      meta.name = 'theme-color';
+      meta.content = isDark ? '#111827' : '#F8F7F4';
+      document.head.appendChild(meta);
+    }
+    
     if (isDark) {
       document.documentElement.classList.add('dark');
     } else {
