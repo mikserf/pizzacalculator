@@ -180,13 +180,35 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <label htmlFor="desiredDoughTemp" className="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
             Desired Final Dough Temp (°C)
           </label>
-          <input
-            type="number"
+          <div
             id="desiredDoughTemp"
-            value={state.desiredDoughTemp}
-            onChange={(e) => onUpdate({ desiredDoughTemp: parseFloat(e.target.value) })}
-            className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
-          />
+            className="flex gap-2 overflow-x-auto horizontal-scroll py-2"
+            role="listbox"
+            aria-label="Desired Final Dough Temperature"
+          >
+            {Array.from({ length: 8 }, (_, i) => i + 19).map((temp) => {
+              const selected = state.desiredDoughTemp === temp;
+              return (
+                <button
+                  key={temp}
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  aria-pressed={selected}
+                  onClick={() => onUpdate({ desiredDoughTemp: temp })}
+                  className={[
+                    "px-4 py-2 rounded-full border whitespace-nowrap select-none",
+                    "min-w-[64px] text-center font-semibold",
+                    selected
+                      ? "bg-orange-600 text-white border-orange-600"
+                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600",
+                  ].join(" ")}
+                >
+                  {temp}°C
+                </button>
+              );
+            })}
+          </div>
         </div>
         <div>
           <div className="flex items-center justify-between mb-2">
