@@ -25,8 +25,8 @@ const PizzaCalculator: React.FC = () => {
   return (
     <div className="container mx-auto max-w-4xl p-8 md:p-12">
       <header className="text-center mb-12">
-        <h1 className="font-display text-5xl font-bold mb-2">Perfect Pizza Dough</h1>
-        <p className="text-lg text-gray-500">Your artisan recipe, calculated.</p>
+        <h1 className="font-display text-5xl font-bold mb-2">Pizza Dough Calculator</h1>
+        <p className="text-lg text-gray-500">Flour, water, salt, yeast.</p>
       </header>
 
       <div className="md:grid md:grid-cols-2 md:gap-16">
