@@ -35,6 +35,10 @@ input::-webkit-inner-spin-button {
   transition: opacity 0.2s;
 }
 
+.dark .pizza-slider {
+  background: #4b5563;
+}
+
 .pizza-slider:hover {
   opacity: 1;
 }
@@ -49,6 +53,10 @@ input::-webkit-inner-spin-button {
   border-radius: 50%;
 }
 
+.dark .pizza-slider::-webkit-slider-thumb {
+  background: #fb923c;
+}
+
 .pizza-slider::-moz-range-thumb {
   width: 24px;
   height: 24px;
@@ -56,4 +64,8 @@ input::-webkit-inner-spin-button {
   cursor: pointer;
   border-radius: 50%;
   border: none;
+}
+
+.dark .pizza-slider::-moz-range-thumb {
+  background: #fb923c;
 }
