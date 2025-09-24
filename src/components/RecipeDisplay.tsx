@@ -1,4 +1,5 @@
 import React from 'react';
+import { Wheat, Droplet, Diamond, FlaskConical } from 'lucide-react';
 import { RecipeResult } from '../types/pizza';
 
 interface RecipeDisplayProps {
@@ -15,25 +16,37 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ numPizzas, recipe }) => {
       
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm dark:shadow-gray-900/20 p-8 space-y-6 border border-gray-100 dark:border-gray-700">
         <div className="flex justify-between items-baseline">
-          <span className="text-lg text-gray-600 dark:text-gray-300">Flour</span>
+          <span className="flex items-center gap-2 text-lg text-gray-600 dark:text-gray-300">
+            <Wheat className="h-5 w-5 text-orange-600 dark:text-orange-400" aria-hidden="true" />
+            Flour
+          </span>
           <p className="font-bold text-4xl text-orange-600 dark:text-orange-400">
             {recipe.flour.toFixed(0)}g
           </p>
         </div>
         <div className="flex justify-between items-baseline">
-          <span className="text-lg text-gray-600 dark:text-gray-300">Water</span>
+          <span className="flex items-center gap-2 text-lg text-gray-600 dark:text-gray-300">
+            <Droplet className="h-5 w-5 text-orange-600 dark:text-orange-400" aria-hidden="true" />
+            Water
+          </span>
           <p className="font-bold text-4xl text-orange-600 dark:text-orange-400">
             {recipe.water.toFixed(0)}g
           </p>
         </div>
         <div className="flex justify-between items-baseline">
-          <span className="text-lg text-gray-600 dark:text-gray-300">Salt</span>
+          <span className="flex items-center gap-2 text-lg text-gray-600 dark:text-gray-300">
+            <Diamond className="h-5 w-5 text-orange-600 dark:text-orange-400" aria-hidden="true" />
+            Salt
+          </span>
           <p className="font-bold text-4xl text-orange-600 dark:text-orange-400">
             {recipe.salt.toFixed(0)}g
           </p>
         </div>
         <div className="flex justify-between items-baseline">
-          <span className="text-lg text-gray-600 dark:text-gray-300">Fresh Yeast</span>
+          <span className="flex items-center gap-2 text-lg text-gray-600 dark:text-gray-300">
+            <FlaskConical className="h-5 w-5 text-orange-600 dark:text-orange-400" aria-hidden="true" />
+            Fresh Yeast
+          </span>
           <p className="font-bold text-4xl text-orange-600 dark:text-orange-400">
             {recipe.yeast.toFixed(2)}g
           </p>
