@@ -12,6 +12,8 @@ export interface PizzaState {
   testTubeDough: boolean;
   desiredDoughTemp: number;
   frictionFactor: number;
+  waterPercent: number; // hydration percentage, e.g. 66 means 66%
+  saltPercent: number; // salt percentage, e.g. 2.8 means 2.8%
 }
 
 export interface RecipeResult {
