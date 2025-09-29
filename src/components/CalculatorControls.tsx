@@ -4,9 +4,11 @@ import { PizzaState } from '../types/pizza';
 interface CalculatorControlsProps {
   state: PizzaState;
   onUpdate: (updates: Partial<PizzaState>) => void;
+  showAdvanced?: boolean;
+  onToggleAdvanced?: () => void;
 }
 
-const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate }) => {
+const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate, showAdvanced = false, onToggleAdvanced }) => {
   const handleDoughWeightChange = (delta: number) => {
     const newValue = state.doughBallWeight + delta;
     if (newValue >= 200) {
@@ -235,7 +237,25 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
       <hr className="border-gray-200 dark:border-gray-700" />
 
       <div className="space-y-6">
-        <h3 className="font-display text-xl font-bold dark:text-white">Advanced Settings</h3>
+        <button
+          type="button"
+          aria-expanded={showAdvanced}
+          onClick={onToggleAdvanced}
+          className="w-full flex items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800/60"
+        >
+          <span className="font-display text-xl font-bold dark:text-white">Advanced Settings</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className={["w-5 h-5 transition-transform", showAdvanced ? "rotate-180" : "rotate-0"].join(" ")}
+            aria-hidden="true"
+          >
+            <path fillRule="evenodd" d="M12 15.75a.75.75 0 0 1-.53-.22l-6-6a.75.75 0 1 1 1.06-1.06L12 13.94l5.47-5.47a.75.75 0 1 1 1.06 1.06l-6 6a.75.75 0 0 1-.53.22Z" clipRule="evenodd" />
+          </svg>
+        </button>
+
+        {showAdvanced && (
         <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-300 dark:border-gray-600">
           <label htmlFor="testTubeDough" className="font-semibold text-gray-700 dark:text-gray-200">
             Use 80g dough for test tube
@@ -248,6 +268,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
             className="h-6 w-6 rounded text-orange-600 border-gray-300 dark:border-gray-600 focus:ring-orange-500 dark:bg-gray-700"
           />
         </div>
+        )}
         <div>
           <label htmlFor="desiredDoughTemp" className="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
             Desired Final Dough Temp (°C)
