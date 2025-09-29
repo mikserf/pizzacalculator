@@ -256,79 +256,81 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         </button>
 
         {showAdvanced && (
-        <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-300 dark:border-gray-600">
-          <label htmlFor="testTubeDough" className="font-semibold text-gray-700 dark:text-gray-200">
-            Use 80g dough for test tube
-          </label>
-          <input
-            type="checkbox"
-            id="testTubeDough"
-            checked={state.testTubeDough}
-            onChange={(e) => onUpdate({ testTubeDough: e.target.checked })}
-            className="h-6 w-6 rounded text-orange-600 border-gray-300 dark:border-gray-600 focus:ring-orange-500 dark:bg-gray-700"
-          />
-        </div>
-        )}
-        <div>
-          <label htmlFor="desiredDoughTemp" className="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
-            Desired Final Dough Temp (°C)
-          </label>
-          <div
-            id="desiredDoughTemp"
-            className="flex gap-2 overflow-x-auto horizontal-scroll py-2"
-            role="listbox"
-            aria-label="Desired Final Dough Temperature"
-          >
-            {Array.from({ length: 8 }, (_, i) => i + 19).map((temp) => {
-              const selected = state.desiredDoughTemp === temp;
-              return (
+          <>
+            <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-300 dark:border-gray-600">
+              <label htmlFor="testTubeDough" className="font-semibold text-gray-700 dark:text-gray-200">
+                Use 80g dough for test tube
+              </label>
+              <input
+                type="checkbox"
+                id="testTubeDough"
+                checked={state.testTubeDough}
+                onChange={(e) => onUpdate({ testTubeDough: e.target.checked })}
+                className="h-6 w-6 rounded text-orange-600 border-gray-300 dark:border-gray-600 focus:ring-orange-500 dark:bg-gray-700"
+              />
+            </div>
+            <div>
+              <label htmlFor="desiredDoughTemp" className="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
+                Desired Final Dough Temp (°C)
+              </label>
+              <div
+                id="desiredDoughTemp"
+                className="flex gap-2 overflow-x-auto horizontal-scroll py-2"
+                role="listbox"
+                aria-label="Desired Final Dough Temperature"
+              >
+                {Array.from({ length: 8 }, (_, i) => i + 19).map((temp) => {
+                  const selected = state.desiredDoughTemp === temp;
+                  return (
+                    <button
+                      key={temp}
+                      type="button"
+                      role="option"
+                      aria-selected={selected}
+                      aria-pressed={selected}
+                      onClick={() => onUpdate({ desiredDoughTemp: temp })}
+                      className={[
+                        "px-4 py-2 rounded-full border whitespace-nowrap select-none",
+                        "min-w-[64px] text-center font-semibold",
+                        selected
+                          ? "bg-orange-600 text-white border-orange-600"
+                          : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600",
+                      ].join(" ")}
+                    >
+                      {temp}°C
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="frictionFactor" className="block text-sm font-semibold text-gray-600 dark:text-gray-300">
+                  Mixer Friction Factor
+                </label>
                 <button
-                  key={temp}
                   type="button"
-                  role="option"
-                  aria-selected={selected}
-                  aria-pressed={selected}
-                  onClick={() => onUpdate({ desiredDoughTemp: temp })}
-                  className={[
-                    "px-4 py-2 rounded-full border whitespace-nowrap select-none",
-                    "min-w-[64px] text-center font-semibold",
-                    selected
-                      ? "bg-orange-600 text-white border-orange-600"
-                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600",
-                  ].join(" ")}
+                  aria-label="What is mixer friction?"
+                  onClick={() => setShowFrictionInfo(true)}
+                  className="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  {temp}°C
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                    <path d="M11.25 11.25a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75H12a.75.75 0 0 1-.75-.75v-4.5ZM12 6.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z" />
+                    <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm9.75-8.25a8.25 8.25 0 1 0 0 16.5 8.25 8.25 0 0 0 0-16.5Z" clipRule="evenodd" />
+                  </svg>
                 </button>
-              );
-            })}
-          </div>
-        </div>
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label htmlFor="frictionFactor" className="block text-sm font-semibold text-gray-600 dark:text-gray-300">
-              Mixer Friction Factor
-            </label>
-            <button
-              type="button"
-              aria-label="What is mixer friction?"
-              onClick={() => setShowFrictionInfo(true)}
-              className="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-full border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                <path d="M11.25 11.25a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-.75.75H12a.75.75 0 0 1-.75-.75v-4.5ZM12 6.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z" />
-                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm9.75-8.25a8.25 8.25 0 1 0 0 16.5 8.25 8.25 0 0 0 0-16.5Z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </div>
-          <input
-            type="number"
-            id="frictionFactor"
-            value={state.frictionFactor}
-            onChange={(e) => onUpdate({ frictionFactor: parseFloat(e.target.value) })}
-            step="0.1"
-            className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
-          />
-        </div>
+              </div>
+              <input
+                type="number"
+                id="frictionFactor"
+                value={state.frictionFactor}
+                onChange={(e) => onUpdate({ frictionFactor: parseFloat(e.target.value) })}
+                step="0.1"
+                className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
+              />
+            </div>
+          </>
+        )}
       </div>
       {showFrictionInfo && (
         <div
