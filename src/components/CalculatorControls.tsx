@@ -42,7 +42,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleDoughWeightChange(-5)}
-            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             -
           </button>
@@ -53,12 +53,12 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
             onChange={(e) => onUpdate({ doughBallWeight: parseInt(e.target.value, 10) })}
             step="5"
             min="200"
-            className="flex-grow bg-white dark:bg-gray-800 rounded-lg p-3 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
+            className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
           />
           <button
             type="button"
             onClick={() => handleDoughWeightChange(5)}
-            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             +
           </button>
@@ -97,7 +97,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleWaterPercentChange(-1)}
-            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             -
           </button>
@@ -114,12 +114,12 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
             step="1"
             min="50"
             max="85"
-            className="flex-grow bg-white dark:bg-gray-800 rounded-lg p-3 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
+            className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
           />
           <button
             type="button"
             onClick={() => handleWaterPercentChange(1)}
-            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             +
           </button>
@@ -134,7 +134,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleSaltPercentChange(-0.1)}
-            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             -
           </button>
@@ -152,12 +152,12 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
             step="0.1"
             min="1.5"
             max="3.5"
-            className="flex-grow bg-white dark:bg-gray-800 rounded-lg p-3 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
+            className="w-full bg-white dark:bg-gray-800 rounded-lg p-3 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
           />
           <button
             type="button"
             onClick={() => handleSaltPercentChange(0.1)}
-            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             +
           </button>
