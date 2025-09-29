@@ -28,7 +28,6 @@ export const calculateRecipe = (state: PizzaState): RecipeResult => {
     numPizzas,
     bakeTime,
     roomTemp,
-    moreWater,
     testTubeDough,
     desiredDoughTemp,
     frictionFactor,
@@ -41,7 +40,7 @@ export const calculateRecipe = (state: PizzaState): RecipeResult => {
   const fermentationTime = (bakeDateTime.getTime() - currentTime.getTime()) / (1000 * 60 * 60);
 
   // Calculate flour per ball
-  const waterPercentage = (typeof waterPercent === 'number' ? waterPercent : (moreWater ? 69 : 66)) / 100;
+  const waterPercentage = (typeof waterPercent === 'number' ? waterPercent : 66) / 100;
   const saltPercentage = (typeof saltPercent === 'number' ? saltPercent : 2.8) / 100;
   const totalPercentage = 1 + waterPercentage + saltPercentage;
   const flourPerBall = doughBallWeight / totalPercentage;
