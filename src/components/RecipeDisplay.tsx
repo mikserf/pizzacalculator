@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wheat, Droplet, Diamond, FlaskConical } from 'lucide-react';
+import { Wheat, Droplet, Diamond, FlaskConical, Scale } from 'lucide-react';
 import { RecipeResult } from '../types/pizza';
 
 interface RecipeDisplayProps {
@@ -50,6 +50,17 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ numPizzas, recipe }) => {
           <p className="font-bold text-4xl text-orange-600 dark:text-orange-400">
             {recipe.yeast.toFixed(2)}g
           </p>
+        </div>
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">
+          <div className="flex justify-between items-baseline">
+            <span className="flex items-center gap-2 text-lg text-gray-700 dark:text-gray-200 font-semibold">
+              <Scale className="h-5 w-5 text-orange-600 dark:text-orange-400" aria-hidden="true" />
+              Total
+            </span>
+            <p className="font-bold text-4xl text-orange-700 dark:text-orange-300">
+              {(recipe.flour + recipe.water + recipe.salt + recipe.yeast).toFixed(0)}g
+            </p>
+          </div>
         </div>
       </div>
       
