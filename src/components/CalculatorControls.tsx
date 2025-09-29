@@ -20,6 +20,16 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
 
   const [showFrictionInfo, setShowFrictionInfo] = useState(false);
 
+  const handleWaterPercentChange = (delta: number) => {
+    const next = Math.max(50, Math.min(85, (state.waterPercent ?? 66) + delta));
+    onUpdate({ waterPercent: next, moreWater: next >= 69 });
+  };
+
+  const handleSaltPercentChange = (delta: number) => {
+    const next = Math.max(1.5, Math.min(3.5, Number(((state.saltPercent ?? 2.8) + delta).toFixed(1))));
+    onUpdate({ saltPercent: next });
+  };
+
   return (
     <div className="controls space-y-8">
       <div>
@@ -74,6 +84,81 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
             onChange={(e) => onUpdate({ numPizzas: parseInt(e.target.value, 10) })}
             className="bg-white dark:bg-gray-800 rounded-lg p-3 w-20 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
           />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
+          Water Percentage (%)
+        </label>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => handleWaterPercentChange(-1)}
+            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
+            -
+          </button>
+          <input
+            type="number"
+            inputMode="decimal"
+            value={state.waterPercent}
+            onChange={(e) => {
+              const val = Math.max(50, Math.min(85, parseFloat(e.target.value)));
+              if (!Number.isNaN(val)) {
+                onUpdate({ waterPercent: val, moreWater: val >= 69 });
+              }
+            }}
+            step="1"
+            min="50"
+            max="85"
+            className="flex-grow bg-white dark:bg-gray-800 rounded-lg p-3 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
+          />
+          <button
+            type="button"
+            onClick={() => handleWaterPercentChange(1)}
+            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2">
+          Salt Percentage (%)
+        </label>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => handleSaltPercentChange(-0.1)}
+            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
+            -
+          </button>
+          <input
+            type="number"
+            inputMode="decimal"
+            value={state.saltPercent}
+            onChange={(e) => {
+              const valRaw = parseFloat(e.target.value);
+              const val = Math.max(1.5, Math.min(3.5, Number(valRaw.toFixed ? valRaw.toFixed(1) : valRaw)));
+              if (!Number.isNaN(val)) {
+                onUpdate({ saltPercent: val });
+              }
+            }}
+            step="0.1"
+            min="1.5"
+            max="3.5"
+            className="flex-grow bg-white dark:bg-gray-800 rounded-lg p-3 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
+          />
+          <button
+            type="button"
+            onClick={() => handleSaltPercentChange(0.1)}
+            className="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
+            +
+          </button>
         </div>
       </div>
 
@@ -155,7 +240,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           type="checkbox"
           id="moreWater"
           checked={state.moreWater}
-          onChange={(e) => onUpdate({ moreWater: e.target.checked })}
+          onChange={(e) => onUpdate({ moreWater: e.target.checked, waterPercent: e.target.checked ? 69 : 66 })}
           className="h-6 w-6 rounded text-orange-600 border-gray-300 dark:border-gray-600 focus:ring-orange-500 dark:bg-gray-700"
         />
       </div>
