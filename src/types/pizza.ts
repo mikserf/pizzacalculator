@@ -8,7 +8,7 @@ export interface PizzaState {
   numPizzas: number;
   bakeTime: string;
   roomTemp: number;
-  moreWater: boolean;
+  moreWater: boolean; // deprecated UI toggle, kept for backward compatibility
   testTubeDough: boolean;
   desiredDoughTemp: number;
   frictionFactor: number;
