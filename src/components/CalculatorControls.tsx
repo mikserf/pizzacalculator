@@ -42,7 +42,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleDoughWeightChange(-5)}
-            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-20 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             -
           </button>
@@ -58,7 +58,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleDoughWeightChange(5)}
-            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-20 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             +
           </button>
@@ -97,7 +97,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleWaterPercentChange(-1)}
-            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-20 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             -
           </button>
@@ -119,7 +119,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleWaterPercentChange(1)}
-            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-20 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             +
           </button>
@@ -134,7 +134,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleSaltPercentChange(-0.1)}
-            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-20 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             -
           </button>
@@ -157,7 +157,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <button
             type="button"
             onClick={() => handleSaltPercentChange(0.1)}
-            className="w-16 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="w-20 h-12 flex items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700 text-xl font-bold text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             +
           </button>
