@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PizzaState } from '../types/pizza';
 import { getDefaultBakeTime, calculateRecipe } from '../utils/calculations';
 import CalculatorControls from './CalculatorControls';
@@ -13,7 +13,9 @@ const PizzaCalculator: React.FC = () => {
     moreWater: false,
     testTubeDough: false,
     desiredDoughTemp: 20,
-    frictionFactor: 0.8
+    frictionFactor: 0.8,
+    waterPercent: 66,
+    saltPercent: 2.8
   });
 
   const updateState = (updates: Partial<PizzaState>) => {
