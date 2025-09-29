@@ -5,9 +5,10 @@ import { RecipeResult } from '../types/pizza';
 interface RecipeDisplayProps {
   numPizzas: number;
   recipe: RecipeResult;
+  showAdvanced?: boolean;
 }
 
-const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ numPizzas, recipe }) => {
+const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ numPizzas, recipe, showAdvanced = false }) => {
   return (
     <div className="recipe mt-12 md:mt-0">
       <h2 className="font-display text-3xl font-bold mb-6">
@@ -64,12 +65,14 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ numPizzas, recipe }) => {
         </div>
       </div>
       
-      <div className="mt-8 bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 dark:border-orange-400 p-6 rounded-r-lg">
-        <p className="text-lg font-semibold text-orange-800 dark:text-orange-300">Mix with water at</p>
-        <p className="font-display text-5xl font-bold text-orange-900 dark:text-orange-200">
-          {recipe.requiredWaterTemp.toFixed(1)}°C
-        </p>
-      </div>
+      {showAdvanced && (
+        <div className="mt-8 bg-orange-50 dark:bg-orange-900/20 border-l-4 border-orange-500 dark:border-orange-400 p-6 rounded-r-lg">
+          <p className="text-lg font-semibold text-orange-800 dark:text-orange-300">Mix with water at</p>
+          <p className="font-display text-5xl font-bold text-orange-900 dark:text-orange-200">
+            {recipe.requiredWaterTemp.toFixed(1)}°C
+          </p>
+        </div>
+      )}
       
       <div className="mt-8 text-center">
         <p className="text-gray-500 dark:text-gray-400">
