@@ -18,6 +18,8 @@ const PizzaCalculator: React.FC = () => {
     saltPercent: 2.8
   });
 
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   const updateState = (updates: Partial<PizzaState>) => {
     setState(prevState => ({ ...prevState, ...updates }));
   };
@@ -32,8 +34,13 @@ const PizzaCalculator: React.FC = () => {
       </header>
 
       <div className="md:grid md:grid-cols-2 md:gap-16">
-        <CalculatorControls state={state} onUpdate={updateState} />
-        <RecipeDisplay numPizzas={state.numPizzas} recipe={recipe} />
+        <CalculatorControls
+          state={state}
+          onUpdate={updateState}
+          showAdvanced={showAdvanced}
+          onToggleAdvanced={() => setShowAdvanced((v) => !v)}
+        />
+        <RecipeDisplay numPizzas={state.numPizzas} recipe={recipe} showAdvanced={showAdvanced} />
       </div>
     </div>
   );
