@@ -84,7 +84,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
             id="numPizzas"
             value={state.numPizzas}
             onChange={(e) => onUpdate({ numPizzas: parseInt(e.target.value, 10) })}
-            className="bg-white dark:bg-gray-800 rounded-lg p-3 w-20 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
+            className="bg-white dark:bg-gray-800 rounded-lg p-3 w-12 text-center font-bold border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:text-white"
           />
         </div>
       </div>
