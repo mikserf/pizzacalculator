@@ -232,19 +232,6 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         </div>
       </div>
 
-      <div className="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-300 dark:border-gray-600">
-        <label htmlFor="moreWater" className="font-semibold text-gray-700 dark:text-gray-200">
-          High Hydration (69%)
-        </label>
-        <input
-          type="checkbox"
-          id="moreWater"
-          checked={state.moreWater}
-          onChange={(e) => onUpdate({ moreWater: e.target.checked, waterPercent: e.target.checked ? 69 : 66 })}
-          className="h-6 w-6 rounded text-orange-600 border-gray-300 dark:border-gray-600 focus:ring-orange-500 dark:bg-gray-700"
-        />
-      </div>
-      
       <hr className="border-gray-200 dark:border-gray-700" />
 
       <div className="space-y-6">
