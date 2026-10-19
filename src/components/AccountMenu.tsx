@@ -6,7 +6,7 @@ import { fetchIsAdmin } from '../lib/community';
 import { useAuth } from '../contexts/AuthContext';
 
 const pill =
-  'inline-flex items-center gap-2 rounded-full border border-paper-400 px-3.5 py-1.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-brand-400 hover:text-brand-700 dark:border-char-500 dark:text-char-300 dark:hover:border-brand-400 dark:hover:text-brand-300';
+  'inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-paper-400 px-3 py-1.5 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-brand-400 hover:text-brand-700 dark:border-char-500 dark:text-char-300 dark:hover:border-brand-400 dark:hover:text-brand-300';
 const menuItem =
   'flex w-full items-center gap-2.5 rounded px-3 py-2 text-left font-mono text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-ink-soft transition-colors hover:bg-paper-100 hover:text-brand-700 dark:text-char-300 dark:hover:bg-char-700 dark:hover:text-brand-300';
 

@@ -28,19 +28,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     
-    // Update theme-color meta tag for iOS Safari status bar
-    const themeColorMeta = document.querySelector('meta[name="theme-color"]:not([media])') || 
-                          document.querySelector('meta[name="theme-color"]');
-    
-    if (themeColorMeta) {
-      themeColorMeta.setAttribute('content', isDark ? '#1A1714' : '#EDE6DA');
-    } else {
-      // Create meta tag if it doesn't exist
+    // Browser chrome colour (iOS Safari status bar / Android address bar) follows the
+    // site's own light/dark choice, not just the phone's setting.
+    const color = isDark ? '#1A1714' : '#EDE6DA';
+    const metas = document.querySelectorAll('meta[name="theme-color"]');
+    if (metas.length === 0) {
       const meta = document.createElement('meta');
       meta.name = 'theme-color';
-      meta.content = isDark ? '#1A1714' : '#EDE6DA';
+      meta.content = color;
       document.head.appendChild(meta);
     }
+    metas.forEach((m) => {
+      m.removeAttribute('media');
+      m.setAttribute('content', color);
+    });
     
     if (isDark) {
       document.documentElement.classList.add('dark');

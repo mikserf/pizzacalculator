@@ -4,8 +4,16 @@
 @tailwind utilities;
 
 @layer base {
+  /* The page background lives on <html>, not just the app wrapper: iOS Safari
+     paints the status bar, the toolbar area and overscroll from it. */
   html {
     overflow-y: scroll;
+    background-color: #ede6da; /* paper-linen */
+    color-scheme: light;
+  }
+  html.dark {
+    background-color: #1a1714; /* char-900 */
+    color-scheme: dark;
   }
 }
 

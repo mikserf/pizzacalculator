@@ -10,6 +10,7 @@ const T = {
     dough: 'Deg',
     ballWeight: 'Degbollens vikt',
     numPizzas: 'Antal pizzor',
+    pcs: 'st',
     water: 'Vatten',
     hydration: 'Hydrering',
     salt: 'Salt',
@@ -56,6 +57,7 @@ const T = {
     dough: 'Dough',
     ballWeight: 'Dough Ball Weight',
     numPizzas: 'Number of Pizzas',
+    pcs: 'pcs',
     water: 'Water',
     hydration: 'Hydration',
     salt: 'Salt',
@@ -432,7 +434,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         <Stepper
           id="numPizzas"
           label={t.numPizzas}
-          unit="pcs"
+          unit={t.pcs}
           value={state.numPizzas}
           min={1}
           max={12}
