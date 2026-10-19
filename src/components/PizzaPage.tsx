@@ -108,6 +108,9 @@ const PizzaPage = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [reason, setReason] = useState('');
+  /** Shown next to the Report link, where the user is looking. */
+  const [reportMsg, setReportMsg] = useState<string | null>(null);
+  const [reporting, setReporting] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const load = async () => {
@@ -168,15 +171,18 @@ const PizzaPage = () => {
   };
 
   const sendReport = async () => {
-    if (!pizza || !reason.trim()) return;
+    if (!pizza || !reason.trim() || reporting) return;
+    setReporting(true);
     try {
       const fresh = await reportPizza(pizza.id, reason);
-      setMessage(fresh ? t.reported : t.alreadyReported);
+      setReportMsg(fresh ? t.reported : t.alreadyReported);
       setReportOpen(false);
       setReason('');
     } catch (err) {
       console.error(err);
-      setMessage(t.reportFailed);
+      setReportMsg(t.reportFailed);
+    } finally {
+      setReporting(false);
     }
   };
 
@@ -337,7 +343,8 @@ const PizzaPage = () => {
                     className="w-full resize-none rounded-md border border-paper-400 bg-white/60 px-3 py-2 text-sm text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-char-500 dark:bg-char-900/60 dark:text-char-100"
                   />
                   <div className="flex gap-2">
-                    <button type="button" onClick={sendReport} disabled={!reason.trim()} className={pillSolid}>
+                    <button type="button" onClick={sendReport} disabled={!reason.trim() || reporting} className={pillSolid}>
+                      {reporting && <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />}
                       {t.send}
                     </button>
                     <button type="button" onClick={() => setReportOpen(false)} className={pillOutline}>
@@ -345,8 +352,19 @@ const PizzaPage = () => {
                     </button>
                   </div>
                 </div>
+              ) : reportMsg ? (
+                <p role="status" className="font-display text-sm italic text-brand-700 dark:text-brand-300">
+                  {reportMsg}
+                </p>
               ) : (
-                <button type="button" onClick={() => setReportOpen(true)} className={`${quietLink} inline-flex items-center gap-1.5`}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setReportOpen(true);
+                    setReportMsg(null);
+                  }}
+                  className={`${quietLink} inline-flex items-center gap-1.5`}
+                >
                   <Flag className="h-3.5 w-3.5" aria-hidden="true" />
                   {t.report}
                 </button>
