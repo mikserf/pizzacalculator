@@ -2,6 +2,11 @@
 export const PROTOCOL_TEXT = {
   sv: {
     sectionTitle: 'Gräddning',
+    lockedHint: 'Logga in för att använda degprotokollet — fyll i, spara och skriv ut protokoll för dina degar.',
+    signIn: 'Logga in',
+    inProgress: 'Pågående',
+    show: 'Visa degprotokollet',
+    hide: 'Dölj degprotokollet',
     intro: 'Degprotokoll för den här degen. Recept och tider fylls i från steg 01–03 — fyll i resten under jäsning och bak.',
     title: 'Degprotokoll',
     date: 'Datum',
@@ -93,6 +98,11 @@ export const PROTOCOL_TEXT = {
   },
   en: {
     sectionTitle: 'Bake',
+    lockedHint: 'Sign in to use the dough log — fill in, save and print a log for each dough.',
+    signIn: 'Sign in',
+    inProgress: 'In progress',
+    show: 'Show the dough log',
+    hide: 'Hide the dough log',
     intro: 'Dough log for this dough. Recipe and times are filled in from steps 01–03 — fill in the rest while it ferments and bakes.',
     title: 'Dough log',
     date: 'Date',

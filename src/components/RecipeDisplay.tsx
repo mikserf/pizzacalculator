@@ -226,12 +226,16 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
     .filter((l, i, arr) => !(l === '' && arr[i - 1] === ''))
     .join('\n');
 
-  /** Phone share sheet where available; otherwise copy the link (it holds the whole recipe). */
+  /**
+   * Phone share sheet where available; otherwise copy the link (it holds the whole recipe).
+   * Only title + url: with extra text, iOS glues text and link into one plain message
+   * instead of sending a link with a preview.
+   */
   const handleShare = async () => {
     const url = window.location.href;
     if (typeof navigator.share === 'function') {
       try {
-        await navigator.share({ title: t.shareTitle, text: `${numPizzas} × ${doughBallWeight} g`, url });
+        await navigator.share({ title: t.shareTitle, url });
         return;
       } catch (err) {
         if ((err as DOMException)?.name === 'AbortError') return; // user closed the sheet
