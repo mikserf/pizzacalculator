@@ -24,6 +24,13 @@ const cardClass =
 const badge =
   'rounded-full border border-paper-400 px-2 py-0.5 font-mono text-[0.625rem] font-medium uppercase tracking-wider text-ink-soft dark:border-char-500 dark:text-char-300';
 
+/** UTC timestamp → local "YYYY-MM-DD" (just after midnight the UTC date is still yesterday). */
+const localDate = (ts: string) => {
+  const d = new Date(ts);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
 /** Deglabbet: members' page for saved dough logs — list at /deglabbet, one log at /deglabbet/:id. */
 const DoughLab = () => {
   const { id } = useParams();
@@ -359,7 +366,7 @@ function LogDetail({
             </button>
           </div>
           <p role="status" className="-mt-2 font-display text-sm italic text-ink-muted dark:text-char-400">
-            {status ?? (dirty ? t.unsaved : t.updated(formatLogDate(log.updatedAt.slice(0, 10), lang)))}
+            {status ?? (dirty ? t.unsaved : t.updated(formatLogDate(localDate(log.updatedAt), lang)))}
           </p>
         </div>
       </article>
