@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Moon, Sun, Calculator, PartyPopper, Users } from 'lucide-react';
+import { Menu, X, Moon, Sun, Calculator, PartyPopper, Users, FlaskConical } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import type { Lang } from '../types/party';
@@ -11,6 +12,7 @@ const T = {
     calculator: 'Kalkylator',
     party: 'Party Mode',
     community: 'Community',
+    lab: 'Deglabbet',
     light: 'Byt till ljust läge',
     dark: 'Byt till mörkt läge',
     openMenu: 'Öppna menyn',
@@ -21,6 +23,7 @@ const T = {
     calculator: 'Calculator',
     party: 'Party Mode',
     community: 'Community',
+    lab: 'Dough lab',
     light: 'Switch to light mode',
     dark: 'Switch to dark mode',
     openMenu: 'Open main menu',
@@ -29,10 +32,11 @@ const T = {
   },
 } as const;
 
-const links = [
-  { to: '/', key: 'calculator', Icon: Calculator },
-  { to: '/party-mode', key: 'party', Icon: PartyPopper },
-  { to: '/community', key: 'community', Icon: Users },
+const allLinks = [
+  { to: '/', key: 'calculator', Icon: Calculator, members: false },
+  { to: '/party-mode', key: 'party', Icon: PartyPopper, members: false },
+  { to: '/community', key: 'community', Icon: Users, members: false },
+  { to: '/deglabbet', key: 'lab', Icon: FlaskConical, members: true },
 ] as const;
 
 const LANGS: { value: Lang; label: string; name: string }[] = [
@@ -51,6 +55,9 @@ const Navigation: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
   const { lang, setLang } = useLanguage();
   const t = T[lang];
+  const { user } = useAuth();
+  // Deglabbet is for members: only shown when signed in.
+  const links = allLinks.filter((l) => !l.members || user);
 
   const langToggle = (
     <div
@@ -79,7 +86,9 @@ const Navigation: React.FC = () => {
 
   const closeMenu = () => setIsMenuOpen(false);
   const isActive = (path: string) =>
-    location.pathname === path || (path === '/community' && location.pathname.startsWith('/pizza/'));
+    location.pathname === path ||
+    (path === '/community' && location.pathname.startsWith('/pizza/')) ||
+    (path === '/deglabbet' && location.pathname.startsWith('/deglabbet/'));
 
   const themeButton = (
     <button

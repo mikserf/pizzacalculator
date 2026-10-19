@@ -6,7 +6,16 @@ import type { PizzaState, RecipeResult } from '../types/pizza';
 /* ------------------------------------------------------------------ */
 
 export const RHEOLOGY = ['elastic', 'balanced', 'extensible', 'spreads'] as const;
-export const OPENING = ['springy', 'verySoft', 'easyOpen', 'brittle', 'openedFast', 'heldTopping', 'lowResistance', 'tornByTopping'] as const;
+export const OPENING = [
+  'springy',
+  'verySoft',
+  'easyOpen',
+  'brittle',
+  'openedFast',
+  'heldTopping',
+  'lowResistance',
+  'tornByTopping',
+] as const;
 export const LIFT = ['strong', 'good', 'moderate', 'weak', 'none'] as const;
 export const OUTCOME = ['perfect', 'slightlyLoose', 'tooLoose', 'tooTight'] as const;
 export const GAS_JAR = ['1.9', '2.0', '2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9', '3.0'] as const;
@@ -56,8 +65,16 @@ export interface Protocol {
 
 /** Fields that mirror the calculator until the user edits them. */
 export const AUTO_FIELDS = [
-  'flourG', 'waterG', 'waterPct', 'saltG', 'saltPct', 'yeastG', 'yeastPct',
-  'roomTemp', 'fermentTemp', 'totalHours',
+  'flourG',
+  'waterG',
+  'waterPct',
+  'saltG',
+  'saltPct',
+  'yeastG',
+  'yeastPct',
+  'roomTemp',
+  'fermentTemp',
+  'totalHours',
 ] as const;
 export type AutoField = (typeof AUTO_FIELDS)[number];
 
@@ -75,15 +92,64 @@ const fmt = (v: number, decimals: number) => (Number.isFinite(v) && v > 0 ? v.to
 export const emptyProtocol = (): Protocol => ({
   date: todayIso(),
   batch: '',
-  flour1: '', flour1Batch: '', flour2: '', flour2Batch: '', blend: '',
-  flourG: '', waterG: '', waterPct: '', saltG: '', saltPct: '', yeastG: '', yeastPct: '',
-  waterTemp: '', doughTemp: '', roomTemp: '', fermentTemp: '',
-  autolyse: '', folds: '', fermentStart: nowHHMM(), totalHours: '',
-  gasJar: '', jarLevel: '', spread: '', maturity: '',
-  rheology: [], jarPhoto: false, opening: [],
-  lift: '', outcome: '',
+  flour1: '',
+  flour1Batch: '',
+  flour2: '',
+  flour2Batch: '',
+  blend: '',
+  flourG: '',
+  waterG: '',
+  waterPct: '',
+  saltG: '',
+  saltPct: '',
+  yeastG: '',
+  yeastPct: '',
+  waterTemp: '',
+  doughTemp: '',
+  roomTemp: '',
+  fermentTemp: '',
+  autolyse: '',
+  folds: '',
+  fermentStart: nowHHMM(),
+  totalHours: '',
+  gasJar: '',
+  jarLevel: '',
+  spread: '',
+  maturity: '',
+  rheology: [],
+  jarPhoto: false,
+  opening: [],
+  lift: '',
+  outcome: '',
   notes: '',
 });
+
+/* ------------------------------------------------------------------ */
+/* Batch numbers: YYMM-NN ("2610-01" = first batch of October 2026)    */
+/* ------------------------------------------------------------------ */
+
+const BATCH_RE = /^(\d{4})-(\d{1,3})$/;
+
+/** "2026-10-19" → "2610". */
+export const batchPrefix = (dateIso: string): string => {
+  const [y, m] = (dateIso || todayIso()).split('-');
+  return `${y.slice(2)}${m}`;
+};
+
+/**
+ * Next free batch number for the month of `dateIso`: one above the highest
+ * existing number that month (not a count, so deleting a log never makes a
+ * duplicate). Sorts correctly as text; up to 99 per month keeps two digits.
+ */
+export function nextBatch(dateIso: string, existing: string[]): string {
+  const prefix = batchPrefix(dateIso);
+  let max = 0;
+  for (const b of existing) {
+    const m = BATCH_RE.exec(b.trim());
+    if (m && m[1] === prefix) max = Math.max(max, Number(m[2]));
+  }
+  return `${prefix}-${String(max + 1).padStart(2, '0')}`;
+}
 
 /** The calculator's values for the auto fields. */
 export function calculatorValues(state: PizzaState, recipe: RecipeResult): Record<AutoField, string> {
@@ -148,6 +214,8 @@ export interface Draft {
   data: Protocol;
   /** Auto fields the user has changed (no longer follow the calculator). */
   touched: AutoField[];
+  /** The batch number is filled in automatically until the user types one. */
+  batchAuto: boolean;
 }
 
 export function loadDraft(): Draft | null {
@@ -158,7 +226,10 @@ export function loadDraft(): Draft | null {
     return {
       id: typeof d.id === 'string' ? d.id : null,
       data: normalizeProtocol(d.data),
-      touched: Array.isArray(d.touched) ? d.touched.filter((k: string) => (AUTO_FIELDS as readonly string[]).includes(k)) : [],
+      touched: Array.isArray(d.touched)
+        ? d.touched.filter((k: string) => (AUTO_FIELDS as readonly string[]).includes(k))
+        : [],
+      batchAuto: typeof d.batchAuto === 'boolean' ? d.batchAuto : !d.data?.batch,
     };
   } catch {
     return null;
@@ -239,3 +310,64 @@ export async function deleteLog(id: string): Promise<void> {
   const { error } = await db().delete().eq('id', id);
   if (error) throw error;
 }
+
+/* ------------------------------------------------------------------ */
+/* Shared helpers for section 04 and Deglabbet                         */
+/* ------------------------------------------------------------------ */
+
+export type RecipeSnapshot = ReturnType<typeof recipeSnapshot>;
+
+/** "6 × 265 g · 66 % · 24 h kallt 4 °C" (empty if the snapshot is missing). */
+export function recipeSummary(snapshot: Record<string, unknown> | null | undefined, lang: 'sv' | 'en'): string {
+  const s = (snapshot ?? {}) as Partial<RecipeSnapshot>;
+  if (!s.numPizzas || !s.doughBallWeight) return '';
+  const ferment = s.isColdFerment
+    ? `${s.coldFermentHours} h ${lang === 'sv' ? 'kallt' : 'cold'} ${s.fridgeTemp} °C`
+    : `${s.roomTemp} °C`;
+  return `${s.numPizzas} × ${s.doughBallWeight} g · ${s.waterPercent} % · ${ferment}`;
+}
+
+/** "19 okt. 2026" / "19 Oct 2026". */
+export const formatLogDate = (iso: string | null | undefined, lang: 'sv' | 'en'): string =>
+  iso
+    ? new Date(`${iso}T12:00`).toLocaleDateString(lang === 'sv' ? 'sv-SE' : 'en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      })
+    : '—';
+
+/** Print only the protocol sheet (see the print rules in index.css). */
+export function printProtocol(): void {
+  const root = document.documentElement;
+  root.dataset.print = 'protocol';
+  const done = () => {
+    delete root.dataset.print;
+    window.removeEventListener('afterprint', done);
+  };
+  window.addEventListener('afterprint', done);
+  window.print();
+  window.setTimeout(done, 1000); // browsers without afterprint
+}
+
+/** Does the protocol contain anything beyond what the calculator fills in? */
+export const hasUserInput = (p: Protocol): boolean =>
+  [
+    p.flour1,
+    p.flour2,
+    p.blend,
+    p.waterTemp,
+    p.doughTemp,
+    p.folds,
+    p.gasJar,
+    p.spread,
+    p.jarLevel,
+    p.maturity,
+    p.lift,
+    p.outcome,
+    p.notes,
+    p.autolyse,
+  ].some((v) => v !== '') ||
+  p.rheology.length > 0 ||
+  p.opening.length > 0 ||
+  p.jarPhoto;

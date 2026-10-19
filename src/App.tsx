@@ -9,6 +9,7 @@ import Community from './components/Community';
 import PizzaPage from './components/PizzaPage';
 import AdminPage from './components/AdminPage';
 import AccountPage from './components/AccountPage';
+import DoughLab from './components/DoughLab';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -29,6 +30,8 @@ function App() {
                 <Route path="/pizza/:id" element={<PizzaPage />} />
                 <Route path="/admin" element={<AdminPage />} />
                 <Route path="/account" element={<AccountPage />} />
+                <Route path="/deglabbet" element={<DoughLab />} />
+                <Route path="/deglabbet/:id" element={<DoughLab />} />
               </Routes>
               <Footer />
             </div>

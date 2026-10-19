@@ -74,3 +74,24 @@ export function searchFromState(state: PizzaState, defaults: PizzaState): string
   }
   return params.toString();
 }
+
+/**
+ * Calculator link for a saved recipe snapshot (e.g. from a dough log): all known
+ * settings, no bake time (that one is up to the baker today).
+ */
+export function linkFromRecipe(recipe: Partial<PizzaState> | Record<string, unknown>): string {
+  const r = recipe as Partial<PizzaState>;
+  const params = new URLSearchParams();
+  for (const { key, param, min, max, decimals } of NUMBERS) {
+    const v = r[key];
+    if (typeof v === 'number' && Number.isFinite(v)) {
+      params.set(param, Math.min(max, Math.max(min, v)).toFixed(decimals).replace(/\.0+$/, ''));
+    }
+  }
+  for (const { key, param } of BOOLEANS) {
+    const v = r[key];
+    if (typeof v === 'boolean') params.set(param, v ? '1' : '0');
+  }
+  const qs = params.toString();
+  return qs ? `/?${qs}` : '/';
+}
