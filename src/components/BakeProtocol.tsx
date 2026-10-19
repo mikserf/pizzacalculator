@@ -306,7 +306,14 @@ const BakeProtocol = ({ state, recipe }: BakeProtocolProps) => {
         </div>
       )}
 
-      {user && <ProtocolSheet p={p} t={t} summary={summary} />}
+      {user && (
+        <ProtocolSheet
+          p={p}
+          t={t}
+          summary={summary}
+          url={draft.id ? `${window.location.origin}/deglabbet/${draft.id}` : undefined}
+        />
+      )}
     </section>
   );
 };

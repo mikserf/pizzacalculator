@@ -88,6 +88,8 @@ export const PROTOCOL_TEXT = {
     draftNote: 'Utkastet sparas automatiskt på den här enheten.',
     editing: (d: string) => `Redigerar sparat protokoll från ${d}`,
     myLogs: 'Mina degprotokoll',
+    qrCaption: 'Öppna digitalt',
+    qrUnsaved: 'Spara protokollet för en QR-kod hit',
     labHint: (n: number) =>
       n > 0 ? `Du har ${n} sparade protokoll i Deglabbet.` : 'Sparade protokoll samlas i Deglabbet.',
     toLab: 'Öppna Deglabbet',
@@ -186,6 +188,8 @@ export const PROTOCOL_TEXT = {
     draftNote: 'The draft is saved automatically on this device.',
     editing: (d: string) => `Editing saved log from ${d}`,
     myLogs: 'My dough logs',
+    qrCaption: 'Open online',
+    qrUnsaved: 'Save the log to get a QR code here',
     labHint: (n: number) =>
       n > 0 ? `You have ${n} saved ${n === 1 ? 'log' : 'logs'} in the dough lab.` : 'Saved logs are collected in the dough lab.',
     toLab: 'Open the dough lab',

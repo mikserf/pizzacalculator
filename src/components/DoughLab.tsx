@@ -371,7 +371,7 @@ function LogDetail({
         </div>
       </article>
 
-      <ProtocolSheet p={data} t={pt} summary={summary} />
+      <ProtocolSheet p={data} t={pt} summary={summary} url={`${window.location.origin}/deglabbet/${log.id}`} />
     </div>
   );
 }

@@ -10,7 +10,6 @@ import { printLink } from '../lib/recipeLink';
 const T = {
   sv: {
     locale: 'sv-SE',
-    heading: (n: number) => `Ditt recept för ${n} ${n === 1 ? 'pizza' : 'pizzor'}`,
     recipe: 'Degrecept',
     flour: 'Mjöl',
     water: 'Vatten',
@@ -44,7 +43,6 @@ const T = {
   },
   en: {
     locale: 'en-GB',
-    heading: (n: number) => `Your Recipe for ${n} ${n === 1 ? 'Pizza' : 'Pizzas'}`,
     recipe: 'Dough recipe',
     flour: 'Flour',
     water: 'Water',
@@ -271,10 +269,6 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
 
   return (
     <div className="recipe mt-12 md:mt-0">
-      <h2 className="font-display text-3xl font-bold mb-6 text-ink dark:text-char-100">
-        {t.heading(numPizzas)}
-      </h2>
-
       <div className="recipe-ticket">
         <article className="recipe-ticket-paper" aria-label={t.recipe}>
           {/* Masthead */}

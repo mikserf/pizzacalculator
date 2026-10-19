@@ -6,6 +6,9 @@ interface QrCodeProps {
   /** Accessible name, e.g. "QR code: opens this recipe". */
   label: string;
   className?: string;
+  /** Defaults: ticket paper and ink. */
+  light?: string;
+  dark?: string;
 }
 
 const QUIET_ZONE = 2; // modules of light margin around the code
@@ -14,7 +17,7 @@ const QUIET_ZONE = 2; // modules of light margin around the code
  * QR code as a single crisp SVG path (sharp on screen and in print). Always dark
  * modules on a light square: many phone cameras can't read inverted codes.
  */
-const QrCode = ({ value, label, className }: QrCodeProps) => {
+const QrCode = ({ value, label, className, light = '#F7EEDC', dark = '#2B2622' }: QrCodeProps) => {
   const { path, size } = useMemo(() => {
     const qr = qrcode(0, 'M'); // auto size, ~15 % error correction (survives a smudge)
     qr.addData(value);
@@ -37,8 +40,8 @@ const QrCode = ({ value, label, className }: QrCodeProps) => {
       aria-label={label}
       shapeRendering="crispEdges"
     >
-      <rect width={size} height={size} rx={1} fill="#F7EEDC" />
-      <path d={path} fill="#2B2622" />
+      <rect width={size} height={size} rx={1} fill={light} />
+      <path d={path} fill={dark} />
     </svg>
   );
 };

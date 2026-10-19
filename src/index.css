@@ -636,6 +636,12 @@ input::-webkit-inner-spin-button {
 .ps-summary { font: 10.5px ui-monospace, monospace; color: #444; margin-top: 3px; }
 .ps-head-fields { display: flex; gap: 18px; align-items: flex-end; }
 .ps-f { display: flex; align-items: flex-end; gap: 6px; font-family: ui-monospace, monospace; font-size: 11px; }
+.ps-qr {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font: 8px ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: #444;
+}
+.ps-qr-code { width: 19mm; height: 19mm; display: block; }
+.ps-qr--none { width: 24mm; text-align: center; text-transform: none; letter-spacing: 0; font-size: 8.5px; line-height: 1.2; }
 
 .ps-sec { margin-bottom: 9px; break-inside: avoid; }
 .ps-sec > h2 {

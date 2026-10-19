@@ -1,6 +1,7 @@
 import { createPortal } from 'react-dom';
 import { GAS_JAR, LIFT, OPENING, OUTCOME, Protocol, RHEOLOGY, SPREAD } from '../lib/doughLog';
 import type { ProtocolText } from '../lib/doughLogText';
+import QrCode from './QrCode';
 
 /** A filled value, or a blank line to write on. */
 function Val({ v, w }: { v: string; w?: number }) {
@@ -27,6 +28,8 @@ interface ProtocolSheetProps {
   t: ProtocolText;
   /** e.g. "6 × 265 g · 66 % vatten · 24 h kall 4 °C" */
   summary: string;
+  /** Address of the saved log in Deglabbet (none while unsaved). */
+  url?: string;
 }
 
 /**
@@ -34,7 +37,7 @@ interface ProtocolSheetProps {
  * Degprotokoll). Rendered into <body>, outside the app, and only shown when
  * printing with html[data-print="protocol"].
  */
-const ProtocolSheet = ({ p, t, summary }: ProtocolSheetProps) =>
+const ProtocolSheet = ({ p, t, summary, url }: ProtocolSheetProps) =>
   createPortal(
     <div className="protocol-sheet" aria-hidden="true">
       <div className="ps-head">
@@ -52,6 +55,15 @@ const ProtocolSheet = ({ p, t, summary }: ProtocolSheetProps) =>
             <span>{t.batch}</span>
             <Val v={p.batch} w={56} />
           </div>
+          {/* Scan to open this log in Deglabbet (only the owner can see it). */}
+          {url ? (
+            <div className="ps-qr">
+              <QrCode value={url} label={t.qrCaption} light="#fff" dark="#000" className="ps-qr-code" />
+              <span>{t.qrCaption}</span>
+            </div>
+          ) : (
+            <div className="ps-qr ps-qr--none">{t.qrUnsaved}</div>
+          )}
         </div>
       </div>
 
