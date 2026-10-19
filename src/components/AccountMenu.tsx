@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Gavel, LogIn, LogOut, Shield, UserRound } from 'lucide-react';
+import { useLang } from '../hooks/useLang';
 import { fetchIsAdmin } from '../lib/community';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -31,9 +32,18 @@ export function Avatar({ url, name, size = 'h-8 w-8' }: { url: string | null; na
   );
 }
 
+const T = {
+  sv: { signIn: 'Logga in', account: 'Konto', moderation: 'Moderering', signOut: 'Logga ut', menu: 'Konto' },
+  en: { signIn: 'Sign in', account: 'Account', moderation: 'Moderation', signOut: 'Sign out', menu: 'Account' },
+} as const;
+
 /** Sign-in pill, or the signed-in user's avatar with a small menu. Renders nothing without Supabase keys. */
 export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
-  const { enabled, loading, user, displayName, avatarUrl, signInWithGoogle, signOut } = useAuth();
+  const { enabled, loading, user, profile, signInWithGoogle, signOut } = useAuth();
+  // The menu is private, so fall back to the email when there's no nickname yet.
+  const displayName = profile?.nickname ?? user?.email ?? null;
+  const avatarUrl = profile?.avatarUrl ?? null;
+  const t = T[useLang()];
   const [open, setOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -61,7 +71,7 @@ export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
     return (
       <button type="button" onClick={() => signInWithGoogle()} className={pill}>
         <LogIn className="h-4 w-4" aria-hidden="true" />
-        Sign in
+        {t.signIn}
       </button>
     );
   }
@@ -72,7 +82,7 @@ export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={`Account: ${displayName ?? 'signed in'}`}
+        aria-label={`${t.menu}: ${displayName ?? ''}`}
         onClick={() => setOpen((v) => !v)}
         className="rounded-full transition-shadow hover:ring-2 hover:ring-brand-400/40 focus:outline-none focus:ring-2 focus:ring-brand-500/40"
       >
@@ -91,7 +101,7 @@ export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
           </div>
           <div className="pt-1.5">
             <Link
-              to="/privacy"
+              to="/account"
               role="menuitem"
               onClick={() => {
                 setOpen(false);
@@ -100,7 +110,7 @@ export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
               className={menuItem}
             >
               <Shield className="h-4 w-4" aria-hidden="true" />
-              Privacy &amp; account
+              {t.account}
             </Link>
             {isAdmin && (
               <Link
@@ -113,7 +123,7 @@ export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
                 className={menuItem}
               >
                 <Gavel className="h-4 w-4" aria-hidden="true" />
-                Moderation
+                {t.moderation}
               </Link>
             )}
             <button
@@ -126,7 +136,7 @@ export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
               className={menuItem}
             >
               <LogOut className="h-4 w-4" aria-hidden="true" />
-              Sign out
+              {t.signOut}
             </button>
           </div>
         </div>

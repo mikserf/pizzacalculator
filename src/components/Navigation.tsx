@@ -2,12 +2,42 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Sun, Calculator, PartyPopper, Users } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
+import type { Lang } from '../types/party';
 import AccountMenu from './AccountMenu';
 
+const T = {
+  sv: {
+    calculator: 'Kalkylator',
+    party: 'Party Mode',
+    community: 'Community',
+    light: 'Byt till ljust läge',
+    dark: 'Byt till mörkt läge',
+    openMenu: 'Öppna menyn',
+    closeMenu: 'Stäng menyn',
+    language: 'Språk',
+  },
+  en: {
+    calculator: 'Calculator',
+    party: 'Party Mode',
+    community: 'Community',
+    light: 'Switch to light mode',
+    dark: 'Switch to dark mode',
+    openMenu: 'Open main menu',
+    closeMenu: 'Close main menu',
+    language: 'Language',
+  },
+} as const;
+
 const links = [
-  { to: '/', label: 'Calculator', Icon: Calculator },
-  { to: '/party-mode', label: 'Party Mode', Icon: PartyPopper },
-  { to: '/community', label: 'Community', Icon: Users },
+  { to: '/', key: 'calculator', Icon: Calculator },
+  { to: '/party-mode', key: 'party', Icon: PartyPopper },
+  { to: '/community', key: 'community', Icon: Users },
+] as const;
+
+const LANGS: { value: Lang; label: string; name: string }[] = [
+  { value: 'sv', label: 'SV', name: 'Svenska' },
+  { value: 'en', label: 'EN', name: 'English' },
 ];
 
 const linkBase = 'transition-colors duration-200';
@@ -19,6 +49,33 @@ const Navigation: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
+  const { lang, setLang } = useLanguage();
+  const t = T[lang];
+
+  const langToggle = (
+    <div
+      role="group"
+      aria-label={t.language}
+      className="inline-flex items-center rounded-full border border-paper-400 p-0.5 dark:border-char-500"
+    >
+      {LANGS.map((l) => (
+        <button
+          key={l.value}
+          type="button"
+          lang={l.value}
+          aria-pressed={lang === l.value}
+          aria-label={l.name}
+          title={l.name}
+          onClick={() => setLang(l.value)}
+          className={`rounded-full px-2.5 py-1 font-mono text-[0.6875rem] font-medium tracking-[0.12em] ${linkBase} ${
+            lang === l.value ? linkActive : 'text-ink-muted hover:text-ink dark:text-char-400 dark:hover:text-char-100'
+          }`}
+        >
+          {l.label}
+        </button>
+      ))}
+    </div>
+  );
 
   const closeMenu = () => setIsMenuOpen(false);
   const isActive = (path: string) =>
@@ -28,7 +85,7 @@ const Navigation: React.FC = () => {
     <button
       onClick={toggleTheme}
       className={`rounded-full p-2 ${linkBase} ${linkIdle}`}
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label={isDark ? t.light : t.dark}
     >
       <div className="relative h-5 w-5">
         <Sun
@@ -60,8 +117,8 @@ const Navigation: React.FC = () => {
           </Link>
 
           {/* Desktop navigation */}
-          <div className="hidden items-center gap-2 md:flex">
-            {links.map(({ to, label, Icon }) => (
+          <div className="hidden items-center gap-2 lg:flex">
+            {links.map(({ to, key, Icon }) => (
               <Link
                 key={to}
                 to={to}
@@ -71,16 +128,17 @@ const Navigation: React.FC = () => {
                 }`}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
-                {label}
+                {t[key]}
               </Link>
             ))}
             <span className="mx-1 h-5 border-l border-dashed border-paper-400 dark:border-char-500" aria-hidden="true" />
+            {langToggle}
             {themeButton}
             <AccountMenu />
           </div>
 
           {/* Mobile: theme toggle + menu button */}
-          <div className="flex items-center gap-1 md:hidden">
+          <div className="flex items-center gap-1 lg:hidden">
             {themeButton}
             <AccountMenu onNavigate={closeMenu} />
             <button
@@ -88,7 +146,7 @@ const Navigation: React.FC = () => {
               className={`inline-flex items-center justify-center rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-brand-500/40 ${linkBase} ${linkIdle}`}
               aria-expanded={isMenuOpen}
             >
-              <span className="sr-only">{isMenuOpen ? 'Close main menu' : 'Open main menu'}</span>
+              <span className="sr-only">{isMenuOpen ? t.closeMenu : t.openMenu}</span>
               {isMenuOpen ? (
                 <X className="block h-6 w-6" aria-hidden="true" />
               ) : (
@@ -101,9 +159,9 @@ const Navigation: React.FC = () => {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <div className="space-y-1 border-t border-dashed border-paper-400 px-3 pb-3 pt-2 dark:border-char-500">
-            {links.map(({ to, label, Icon }) => (
+            {links.map(({ to, key, Icon }) => (
               <Link
                 key={to}
                 to={to}
@@ -114,9 +172,15 @@ const Navigation: React.FC = () => {
                 }`}
               >
                 <Icon className="h-5 w-5" aria-hidden="true" />
-                {label}
+                {t[key]}
               </Link>
             ))}
+            <div className="flex items-center justify-between px-3 pt-2">
+              <span className="font-mono text-xs font-medium uppercase tracking-[0.14em] text-ink-muted dark:text-char-400">
+                {t.language}
+              </span>
+              {langToggle}
+            </div>
           </div>
         </div>
       )}

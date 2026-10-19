@@ -23,6 +23,7 @@ import { deletePhoto, photoUrl, uploadPhoto } from '../lib/photos';
 import { imageToJpegDataUrl } from '../lib/image';
 import { usePizzaStore, isMyPizza, isValidPizza, newPizzaId } from '../hooks/usePizzaStore';
 import { useAuth } from '../contexts/AuthContext';
+import { useLang } from '../hooks/useLang';
 
 interface IngredientTotal {
   name: string;
@@ -294,10 +295,7 @@ const PartyMode: React.FC = () => {
   const [notice, setNotice] = useState<string | null>(null);
   const importInput = useRef<HTMLInputElement>(null);
   const [previewTab, setPreviewTab] = useState<'menu' | 'shopping'>('menu');
-  const [lang, setLang] = useState<Lang>(() => {
-    const saved = localStorage.getItem('pizzaLang');
-    return saved === 'en' ? 'en' : 'sv';
-  });
+  const lang = useLang();
   const hydrated = useRef(false);
   const [haveIngredients, setHaveIngredients] = useState<string[]>(() => {
     try {
@@ -315,10 +313,6 @@ const PartyMode: React.FC = () => {
   const toggleHave = (key: string) => {
     setHaveIngredients((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
   };
-
-  useEffect(() => {
-    localStorage.setItem('pizzaLang', lang);
-  }, [lang]);
 
   // Hydrate selected pizzas from localStorage once the house menu has loaded
   useEffect(() => {
@@ -987,16 +981,6 @@ const PartyMode: React.FC = () => {
         <div className="mb-10 text-center">
           <h1 className="mb-2 font-display text-4xl font-bold text-ink sm:text-5xl dark:text-char-100">{u.title}</h1>
           <p className="font-display text-lg italic text-ink-muted dark:text-char-400">{u.subtitle}</p>
-
-          {/* Language toggle */}
-          <div className="mt-5 inline-grid grid-cols-2 gap-1 rounded-md border border-paper-400 p-1 dark:border-char-500">
-            <button type="button" aria-pressed={lang === 'sv'} onClick={() => setLang('sv')} className={segBtn(lang === 'sv')}>
-              Svenska
-            </button>
-            <button type="button" aria-pressed={lang === 'en'} onClick={() => setLang('en')} className={segBtn(lang === 'en')}>
-              English
-            </button>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

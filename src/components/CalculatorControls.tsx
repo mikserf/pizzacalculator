@@ -1,6 +1,102 @@
 import React, { useState, useEffect } from 'react';
 import { Minus, Plus, Info, Wheat, Clock, Settings2 } from 'lucide-react';
 import { PizzaState } from '../types/pizza';
+import { useLang } from '../hooks/useLang';
+
+const T = {
+  sv: {
+    decrease: 'Minska',
+    increase: 'Öka',
+    dough: 'Deg',
+    ballWeight: 'Degbollens vikt',
+    numPizzas: 'Antal pizzor',
+    water: 'Vatten',
+    hydration: 'Hydrering',
+    salt: 'Salt',
+    fermentBake: 'Jäsning & gräddning',
+    method: 'Jäsmetod',
+    roomTemp: 'Rumstemp',
+    coldFerment: 'Kalljäsning',
+    coldTime: 'Kalljäsningstid',
+    fridgeTemp: 'Kylskåpstemperatur',
+    whenBake: 'När vill du grädda?',
+    ovenTime: 'Ugnstid',
+    in6: 'Om 6 h',
+    in12: 'Om 12 h',
+    tomorrow: 'I morgon',
+    in48: 'Om 48 h',
+    roomTemperature: 'Rumstemperatur',
+    advanced: 'Avancerade inställningar',
+    testTube: 'Använd 80 g deg till provrör',
+    desiredTemp: 'Önskad slutlig degtemperatur',
+    friction: 'Friktionsfaktor (degblandare)',
+    whatFriction: 'Vad är friktion i degblandaren?',
+    close: 'Stäng',
+    gotIt: 'Uppfattat',
+    modalTitle: 'Vad är friktion i degblandaren?',
+    modalIntro:
+      'Tänk på det som när du gnuggar händerna för att värma dem. När du knådar deg skapar friktionen mellan degen, kroken och skålen värme. Friktionsfaktorn är bara ett tal som säger hur mycket värme just din blandare skapar.',
+    whyTitle: 'Varför spelar det roll?',
+    whyBody:
+      'Jäst är kräsen med temperatur. Att styra degens sluttemperatur är hemligheten bakom en perfekt jäsning och förutsägbara resultat varje gång. Med din friktionsfaktor kan du justera vattentemperaturen så att degen hamnar rätt.',
+    howTitle: 'Så tar du fram din friktionsfaktor (engångstest)',
+    howMeasure: 'Mät temperaturer',
+    howMeasureBody: ': Innan du blandar, mät temperaturen på rummet, mjölet och vattnet.',
+    howMix: 'Blanda',
+    howMixBody: ': Gör degen som vanligt.',
+    howFinal: 'Degens sluttemperatur',
+    howFinalBody: ': Mät degens temperatur direkt när den är färdigblandad.',
+    calcTitle: 'Räkna ut',
+    calcIntro: 'Använd den här enkla formeln:',
+    formula: 'Friktionsfaktor = (3 × degens sluttemp) − (rumstemp + mjöltemp + vattentemp)',
+  },
+  en: {
+    decrease: 'Decrease',
+    increase: 'Increase',
+    dough: 'Dough',
+    ballWeight: 'Dough Ball Weight',
+    numPizzas: 'Number of Pizzas',
+    water: 'Water',
+    hydration: 'Hydration',
+    salt: 'Salt',
+    fermentBake: 'Fermentation & Baking',
+    method: 'Fermentation Method',
+    roomTemp: 'Room Temp',
+    coldFerment: 'Cold Ferment',
+    coldTime: 'Cold Fermentation Time',
+    fridgeTemp: 'Fridge Temperature',
+    whenBake: 'When do you want to bake?',
+    ovenTime: 'Oven time',
+    in6: 'In 6h',
+    in12: 'In 12h',
+    tomorrow: 'Tomorrow',
+    in48: 'In 48h',
+    roomTemperature: 'Room Temperature',
+    advanced: 'Advanced Settings',
+    testTube: 'Use 80g dough for test tube',
+    desiredTemp: 'Desired Final Dough Temp',
+    friction: 'Mixer Friction Factor',
+    whatFriction: 'What is mixer friction?',
+    close: 'Close',
+    gotIt: 'Got it',
+    modalTitle: 'What is Mixer Friction?',
+    modalIntro:
+      'Think of it like rubbing your hands together to warm them up. When you mix dough, the friction between the dough, hook, and bowl creates heat. The Mixer Friction Factor is just a number that tells you how much heat your specific mixer creates.',
+    whyTitle: 'Why Does It Matter?',
+    whyBody:
+      'Yeast is picky about temperature. Controlling your final dough temperature is the secret to perfect fermentation and predictable results every time you bake. By knowing your friction factor, you can adjust your water temperature perfectly to hit that "sweet spot" for your dough.',
+    howTitle: 'How to Find Your Friction Factor (One-Time Test)',
+    howMeasure: 'Measure Temps',
+    howMeasureBody: ': Before mixing, get the temperature of your Room, Flour, and Water.',
+    howMix: 'Mix',
+    howMixBody: ': Make your dough as you normally would.',
+    howFinal: 'Final Dough Temp',
+    howFinalBody: ": As soon as it's done mixing, take the temperature of the dough.",
+    calcTitle: 'Calculate',
+    calcIntro: 'Use this simple formula:',
+    formula: 'Friction Factor = (3 × Final Dough Temp) − (Room Temp + Flour Temp + Water Temp)',
+  },
+} as const;
 
 interface CalculatorControlsProps {
   state: PizzaState;
@@ -88,6 +184,7 @@ function Stepper({
     onChange(next);
   };
 
+  const t = T[useLang()];
   const stepperBtn =
     'w-12 shrink-0 flex items-center justify-center text-brand-600 dark:text-brand-300 hover:bg-paper-100 dark:hover:bg-char-700 active:bg-paper-200 dark:active:bg-char-600 transition-colors';
 
@@ -102,7 +199,7 @@ function Stepper({
         </div>
       )}
       <div className="flex h-12 items-stretch overflow-hidden rounded-md border border-paper-400 bg-white/60 transition-shadow focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20 dark:border-char-500 dark:bg-char-900/60">
-        <button type="button" aria-label={`Decrease ${label || id}`} onClick={() => bump(-step)} className={stepperBtn}>
+        <button type="button" aria-label={`${t.decrease} ${label || id}`} onClick={() => bump(-step)} className={stepperBtn}>
           <Minus className="h-4 w-4" aria-hidden="true" />
         </button>
         <div className="flex flex-1 items-center justify-center gap-1.5 border-x border-dashed border-paper-400 dark:border-char-500">
@@ -120,7 +217,7 @@ function Stepper({
           />
           {unit && <span className="font-mono text-xs text-ink-muted dark:text-char-400">{unit}</span>}
         </div>
-        <button type="button" aria-label={`Increase ${label || id}`} onClick={() => bump(step)} className={stepperBtn}>
+        <button type="button" aria-label={`${t.increase} ${label || id}`} onClick={() => bump(step)} className={stepperBtn}>
           <Plus className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
@@ -306,6 +403,7 @@ function ToggleRow({
 
 const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate, showAdvanced = false, onToggleAdvanced }) => {
   const [showFrictionInfo, setShowFrictionInfo] = useState(false);
+  const t = T[useLang()];
 
   const handleDoughBallWeight = (val: number) => onUpdate({ doughBallWeight: val });
   const handleNumPizzas = (val: number) => onUpdate({ numPizzas: val });
@@ -320,10 +418,10 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
   return (
     <div className="controls space-y-6">
       {/* ------------------------------ Dough ------------------------------ */}
-      <SectionCard icon={<Wheat className="h-4 w-4" aria-hidden="true" />} index="01" title="Dough">
+      <SectionCard icon={<Wheat className="h-4 w-4" aria-hidden="true" />} index="01" title={t.dough}>
         <Stepper
           id="doughBallWeight"
-          label="Dough Ball Weight"
+          label={t.ballWeight}
           unit="g"
           value={state.doughBallWeight}
           min={200}
@@ -333,7 +431,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         />
         <Stepper
           id="numPizzas"
-          label="Number of Pizzas"
+          label={t.numPizzas}
           unit="pcs"
           value={state.numPizzas}
           min={1}
@@ -343,18 +441,18 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         />
         <Stepper
           id="waterPercent"
-          label="Water"
+          label={t.water}
           unit="%"
           value={state.waterPercent ?? 66}
           min={50}
           max={85}
           step={1}
-          hint="Hydration"
+          hint={t.hydration}
           onChange={handleWaterPercent}
         />
         <Stepper
           id="saltPercent"
-          label="Salt"
+          label={t.salt}
           unit="%"
           value={state.saltPercent ?? 2.8}
           min={1.5}
@@ -366,12 +464,12 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
       </SectionCard>
 
       {/* ---------------------- Fermentation & Baking --------------------- */}
-      <SectionCard icon={<Clock className="h-4 w-4" aria-hidden="true" />} index="02" title="Fermentation & Baking">
+      <SectionCard icon={<Clock className="h-4 w-4" aria-hidden="true" />} index="02" title={t.fermentBake}>
         <Segmented<boolean>
-          label="Fermentation Method"
+          label={t.method}
           options={[
-            { value: false, label: 'Room Temp' },
-            { value: true, label: 'Cold Ferment' },
+            { value: false, label: t.roomTemp },
+            { value: true, label: t.coldFerment },
           ]}
           value={state.isColdFerment}
           onChange={(val) => onUpdate({ isColdFerment: val })}
@@ -381,7 +479,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <>
             <Stepper
               id="coldFermentHours"
-              label="Cold Fermentation Time"
+              label={t.coldTime}
               unit="h"
               value={state.coldFermentHours}
               min={0}
@@ -390,7 +488,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
               onChange={handleColdFermentHours}
             />
             <ChipGroup
-              label="Fridge Temperature"
+              label={t.fridgeTemp}
               unit="°C"
               options={fridgeTempOptions}
               value={state.fridgeTemp}
@@ -401,7 +499,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         )}
 
         <div>
-          <FieldLabel hint="Oven time">When do you want to bake?</FieldLabel>
+          <FieldLabel hint={t.ovenTime}>{t.whenBake}</FieldLabel>
           <input
             type="datetime-local"
             id="bakeTime"
@@ -411,10 +509,10 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           />
           <div className="mt-2 grid grid-cols-4 gap-2">
             {[
-              { label: 'In 6h', hours: 6 },
-              { label: 'In 12h', hours: 12 },
-              { label: 'Tomorrow', hours: 24 },
-              { label: 'In 48h', hours: 48 },
+              { label: t.in6, hours: 6 },
+              { label: t.in12, hours: 12 },
+              { label: t.tomorrow, hours: 24 },
+              { label: t.in48, hours: 48 },
             ].map((preset) => (
               <button
                 key={preset.label}
@@ -429,7 +527,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         </div>
 
         <ChipGroup
-          label="Room Temperature"
+          label={t.roomTemperature}
           unit="°C"
           options={roomTempOptions}
           value={state.roomTemp}
@@ -442,18 +540,18 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
       <SectionCard
         icon={<Settings2 className="h-4 w-4" aria-hidden="true" />}
         index="03"
-        title="Advanced Settings"
+        title={t.advanced}
         collapsible
         open={showAdvanced}
         onToggle={onToggleAdvanced}
       >
         <ToggleRow
-          label="Use 80g dough for test tube"
+          label={t.testTube}
           checked={state.testTubeDough}
           onChange={(val) => onUpdate({ testTubeDough: val })}
         />
         <ChipGroup
-          label="Desired Final Dough Temp"
+          label={t.desiredTemp}
           unit="°C"
           options={roomTempOptions}
           value={state.desiredDoughTemp}
@@ -463,11 +561,11 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
         <div>
           <div className="mb-2 flex items-center justify-between">
             <label htmlFor="frictionFactor" className={labelText}>
-              Mixer Friction Factor
+              {t.friction}
             </label>
             <button
               type="button"
-              aria-label="What is mixer friction?"
+              aria-label={t.whatFriction}
               onClick={() => setShowFrictionInfo(true)}
               className="inline-flex h-6 w-6 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-paper-100 hover:text-brand-700 active:bg-paper-200 dark:text-char-400 dark:hover:bg-char-700 dark:hover:text-brand-300"
             >
@@ -499,11 +597,11 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           <div className="relative m-0 w-full rounded-t-xl border border-paper-300 bg-paper-50 p-6 text-ink shadow-xl sm:m-4 sm:max-w-lg sm:rounded-lg sm:p-8 dark:border-char-600 dark:bg-char-800 dark:text-char-100">
             <div className="flex items-start justify-between gap-4">
               <h2 id="friction-info-title" className="font-display text-xl font-bold sm:text-2xl">
-                What is Mixer Friction?
+                {t.modalTitle}
               </h2>
               <button
                 type="button"
-                aria-label="Close"
+                aria-label={t.close}
                 onClick={() => setShowFrictionInfo(false)}
                 className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-paper-100 active:bg-paper-200 dark:hover:bg-char-700 dark:active:bg-char-600"
               >
@@ -517,39 +615,32 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
               </button>
             </div>
             <div className="mt-4 space-y-4 text-sm leading-6">
-              <p>
-                Think of it like rubbing your hands together to warm them up. When you mix dough, the friction between
-                the dough, hook, and bowl creates heat. The Mixer Friction Factor is just a number that tells you how
-                much heat your specific mixer creates.
-              </p>
+              <p>{t.modalIntro}</p>
               <div>
-                <h3 className="font-semibold">Why Does It Matter?</h3>
-                <p>
-                  Yeast is picky about temperature. Controlling your final dough temperature is the secret to perfect
-                  fermentation and predictable results every time you bake. By knowing your friction factor, you can
-                  adjust your water temperature perfectly to hit that "sweet spot" for your dough.
-                </p>
+                <h3 className="font-semibold">{t.whyTitle}</h3>
+                <p>{t.whyBody}</p>
               </div>
               <div>
-                <h3 className="font-semibold">How to Find Your Friction Factor (One-Time Test)</h3>
+                <h3 className="font-semibold">{t.howTitle}</h3>
                 <ul className="list-disc space-y-1 pl-5">
                   <li>
-                    <span className="font-semibold">Measure Temps</span>: Before mixing, get the temperature of your
-                    Room, Flour, and Water.
+                    <span className="font-semibold">{t.howMeasure}</span>
+                    {t.howMeasureBody}
                   </li>
                   <li>
-                    <span className="font-semibold">Mix</span>: Make your dough as you normally would.
+                    <span className="font-semibold">{t.howMix}</span>
+                    {t.howMixBody}
                   </li>
                   <li>
-                    <span className="font-semibold">Final Dough Temp</span>: As soon as it's done mixing, take the
-                    temperature of the dough.
+                    <span className="font-semibold">{t.howFinal}</span>
+                    {t.howFinalBody}
                   </li>
                 </ul>
                 <div className="mt-3">
-                  <h4 className="font-semibold">Calculate</h4>
-                  <p>Use this simple formula:</p>
+                  <h4 className="font-semibold">{t.calcTitle}</h4>
+                  <p>{t.calcIntro}</p>
                   <div className="mt-2 rounded-md border border-dashed border-paper-400 bg-paper-100 p-3 font-mono text-[0.8125rem] font-medium text-brand-800 dark:border-char-500 dark:bg-char-700 dark:text-brand-200">
-                    Friction Factor = (3 × Final Dough Temp) − (Room Temp + Flour Temp + Water Temp)
+                    {t.formula}
                   </div>
                 </div>
               </div>
@@ -560,7 +651,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
                 onClick={() => setShowFrictionInfo(false)}
                 className="rounded-full bg-ink px-5 py-2 font-mono text-xs font-medium uppercase tracking-[0.14em] text-paper-50 transition-colors hover:bg-brand-700 dark:bg-char-100 dark:text-char-900 dark:hover:bg-brand-300"
               >
-                Got it
+                {t.gotIt}
               </button>
             </div>
           </div>

@@ -8,12 +8,31 @@ interface AuthContextValue {
   /** True until the stored session has been checked on page load. */
   loading: boolean;
   user: User | null;
-  displayName: string | null;
-  avatarUrl: string | null;
+  /** Private: the Google picture (only shown publicly if the user opts in). */
+  googlePicture: string | null;
+  /** Public profile; null while loading or when signed out. */
+  profile: Profile | null;
+  updateProfile: (changes: { nickname?: string | null; showPhoto?: boolean }) => Promise<ProfileResult>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<void>;
 }
+
+export interface Profile {
+  /** Public nickname; null until the user picks one (required to share pizzas). */
+  nickname: string | null;
+  /** Public picture: the Google picture if the user opted in, else null. */
+  avatarUrl: string | null;
+}
+
+export type ProfileResult = 'ok' | 'taken' | 'invalid' | 'error';
+
+/** Same rule as the database: 2–30 characters after trimming. */
+// eslint-disable-next-line react-refresh/only-export-components
+export const validNickname = (s: string) => {
+  const t = s.trim();
+  return t.length >= 2 && t.length <= 30;
+};
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -32,6 +51,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const user = session?.user ?? null;
+  const userId = user?.id ?? null;
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    if (!supabase || !userId) {
+      setProfile(null);
+      return;
+    }
+    let cancelled = false;
+    supabase
+      .from('profiles')
+      .select('display_name, avatar_url')
+      .eq('id', userId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled) setProfile({ nickname: data?.display_name ?? null, avatarUrl: data?.avatar_url ?? null });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  const meta = (user?.user_metadata ?? {}) as Record<string, string | undefined>;
+  const googlePicture = meta.avatar_url ?? meta.picture ?? null;
+
+  const updateProfile = async (changes: { nickname?: string | null; showPhoto?: boolean }): Promise<ProfileResult> => {
+    if (!supabase || !userId) return 'error';
+    const patch: { display_name?: string | null; avatar_url?: string | null } = {};
+    if (changes.nickname !== undefined) {
+      const nick = changes.nickname?.trim() || null;
+      if (nick !== null && !validNickname(nick)) return 'invalid';
+      patch.display_name = nick;
+    }
+    if (changes.showPhoto !== undefined) patch.avatar_url = changes.showPhoto ? googlePicture : null;
+    const { error } = await supabase.from('profiles').update(patch).eq('id', userId);
+    if (error) {
+      console.error('Error updating profile:', error);
+      return error.code === '23505' ? 'taken' : error.code === '23514' ? 'invalid' : 'error';
+    }
+    setProfile((prev) => ({
+      nickname: patch.display_name !== undefined ? patch.display_name : prev?.nickname ?? null,
+      avatarUrl: patch.avatar_url !== undefined ? patch.avatar_url : prev?.avatarUrl ?? null,
+    }));
+    return 'ok';
+  };
 
   /**
    * Sign out of this browser only (Supabase's default also logs out every other
@@ -47,14 +111,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.location.reload();
     }
   };
-  const meta = (user?.user_metadata ?? {}) as Record<string, string | undefined>;
-
   const value: AuthContextValue = {
     enabled: !!supabase,
     loading,
     user,
-    displayName: meta.full_name ?? meta.name ?? user?.email ?? null,
-    avatarUrl: meta.avatar_url ?? meta.picture ?? null,
+    googlePicture,
+    profile,
+    updateProfile,
     signInWithGoogle: async () => {
       if (!supabase) return;
       // Come back to the page the user was on.

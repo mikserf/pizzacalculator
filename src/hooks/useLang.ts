@@ -1,14 +1,7 @@
-import { useState } from 'react';
 import type { Lang } from '../types/party';
+import { useLanguage } from '../contexts/LanguageContext';
 
-/** The Svenska/English choice made in Party Mode (stored per browser). */
+/** The site-wide Svenska/English choice (switched in the top menu). */
 export function useLang(): Lang {
-  const [lang] = useState<Lang>(() => {
-    try {
-      return localStorage.getItem('pizzaLang') === 'en' ? 'en' : 'sv';
-    } catch {
-      return 'sv';
-    }
-  });
-  return lang;
+  return useLanguage().lang;
 }

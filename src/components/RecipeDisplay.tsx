@@ -1,6 +1,68 @@
 import React, { useMemo, useState } from 'react';
 import { Wheat, Droplet, Diamond, FlaskConical, Scissors, Copy, Check, Printer } from 'lucide-react';
 import { PizzaState, RecipeResult } from '../types/pizza';
+import { useLang } from '../hooks/useLang';
+
+const T = {
+  sv: {
+    locale: 'sv-SE',
+    heading: (n: number) => `Ditt recept för ${n} ${n === 1 ? 'pizza' : 'pizzor'}`,
+    recipe: 'Degrecept',
+    flour: 'Mjöl',
+    water: 'Vatten',
+    salt: 'Salt',
+    yeast: 'Jäst',
+    ingredient: 'Ingrediens',
+    weight: 'Vikt',
+    total: 'Total deg',
+    mix: 'Blanda',
+    bake: 'Grädda',
+    cold: (h: number, temp: number) => `${h} h kallt · ${temp}°C`,
+    at: (temp: number) => `vid ${temp}°C`,
+    pickFuture: 'Välj en gräddningstid i framtiden för att skriva ut receptet.',
+    waterAt: 'Blanda med vatten på',
+    copy: 'Kopiera recept',
+    copied: 'Kopierat',
+    print: 'Skriv ut',
+    test: 'test',
+    plainTitle: 'PIZZADEG',
+    plainBake: 'Grädda',
+    plainTotal: 'Total deg',
+    plainFerment: 'Jäsning',
+    plainColdAt: (h: number, temp: number) => ` (${h} h kallt vid ${temp}°C)`,
+    plainAt: (temp: number) => ` vid ${temp}°C`,
+    plainWater: 'Vattentemp',
+  },
+  en: {
+    locale: 'en-GB',
+    heading: (n: number) => `Your Recipe for ${n} ${n === 1 ? 'Pizza' : 'Pizzas'}`,
+    recipe: 'Dough recipe',
+    flour: 'Flour',
+    water: 'Water',
+    salt: 'Salt',
+    yeast: 'Yeast',
+    ingredient: 'Ingredient',
+    weight: 'Weight',
+    total: 'Total dough',
+    mix: 'Mix',
+    bake: 'Bake',
+    cold: (h: number, temp: number) => `${h} h cold · ${temp}°C`,
+    at: (temp: number) => `at ${temp}°C`,
+    pickFuture: 'Pick a bake time in the future to print your recipe.',
+    waterAt: 'Mix with water at',
+    copy: 'Copy recipe',
+    copied: 'Copied',
+    print: 'Print',
+    test: 'test',
+    plainTitle: 'PIZZA DOUGH',
+    plainBake: 'Bake',
+    plainTotal: 'Total dough',
+    plainFerment: 'Fermentation',
+    plainColdAt: (h: number, temp: number) => ` (${h} h cold at ${temp}°C)`,
+    plainAt: (temp: number) => ` at ${temp}°C`,
+    plainWater: 'Water temp',
+  },
+} as const;
 
 interface RecipeDisplayProps {
   state: PizzaState;
@@ -29,12 +91,13 @@ const percent = (v: number) => {
   return `${v.toFixed(2)}%`;
 };
 
-const formatStamp = (d: Date) =>
-  d.toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const formatStamp = (d: Date, locale: string) =>
+  d.toLocaleString(locale, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-const formatTime = (d: Date) => d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+const formatTime = (d: Date, locale: string) => d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
 
-const formatDay = (d: Date) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+const formatDay = (d: Date, locale: string) =>
+  d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
 
 const formatDuration = (hours: number) => {
   const h = Math.floor(hours);
@@ -115,6 +178,7 @@ function HydrationStamp({ hydration }: { hydration: number }) {
 
 const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanced = false }) => {
   const [copied, setCopied] = useState(false);
+  const t = T[useLang()];
   const { numPizzas, doughBallWeight, waterPercent, saltPercent, testTubeDough, isColdFerment } = state;
 
   const isValid = recipe.flour > 0 && recipe.fermentationTime > 0;
@@ -128,12 +192,12 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
   const show = (v: string) => (isValid ? v : '—');
 
   const ingredients: IngredientLine[] = [
-    { Icon: Wheat, label: 'Flour', italian: 'farina', percent: '100%', value: show(grams(recipe.flour)) },
-    { Icon: Droplet, label: 'Water', italian: 'acqua', percent: percent(waterPercent), value: show(grams(recipe.water)) },
-    { Icon: Diamond, label: 'Salt', italian: 'sale', percent: percent(saltPercent), value: show(grams(recipe.salt)) },
+    { Icon: Wheat, label: t.flour, italian: 'farina', percent: '100%', value: show(grams(recipe.flour)) },
+    { Icon: Droplet, label: t.water, italian: 'acqua', percent: percent(waterPercent), value: show(grams(recipe.water)) },
+    { Icon: Diamond, label: t.salt, italian: 'sale', percent: percent(saltPercent), value: show(grams(recipe.salt)) },
     {
       Icon: FlaskConical,
-      label: 'Yeast',
+      label: t.yeast,
       italian: 'lievito fresco',
       percent: isValid ? percent(yeastPercent) : '—',
       value: show(grams(recipe.yeast, 2)),
@@ -141,14 +205,14 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
   ];
 
   const plainText = [
-    `PIZZA DOUGH — ${numPizzas} × ${doughBallWeight} g`,
-    `Bake: ${formatStamp(bakeAt)}`,
+    `${t.plainTitle} — ${numPizzas} × ${doughBallWeight} g`,
+    `${t.plainBake}: ${formatStamp(bakeAt, t.locale)}`,
     '',
     ...ingredients.map((i) => `${i.label.padEnd(12)} ${i.value.padStart(9)}  (${i.percent})`),
     '',
-    `Total dough   ${grams(totalWeight)}`,
-    `Fermentation  ${formatDuration(recipe.fermentationTime)}${isColdFerment ? ` (${state.coldFermentHours} h cold at ${state.fridgeTemp}°C)` : ` at ${state.roomTemp}°C`}`,
-    showAdvanced ? `Water temp    ${recipe.requiredWaterTemp.toFixed(1)}°C` : '',
+    `${t.plainTotal.padEnd(13)} ${grams(totalWeight)}`,
+    `${t.plainFerment.padEnd(13)} ${formatDuration(recipe.fermentationTime)}${isColdFerment ? t.plainColdAt(state.coldFermentHours, state.fridgeTemp) : t.plainAt(state.roomTemp)}`,
+    showAdvanced ? `${t.plainWater.padEnd(13)} ${recipe.requiredWaterTemp.toFixed(1)}°C` : '',
     '',
     'pizzacalculator.se',
   ]
@@ -168,11 +232,11 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
   return (
     <div className="recipe mt-12 md:mt-0">
       <h2 className="font-display text-3xl font-bold mb-6 text-ink dark:text-char-100">
-        Your Recipe for <span>{numPizzas}</span> Pizza{numPizzas !== 1 ? 's' : ''}
+        {t.heading(numPizzas)}
       </h2>
 
       <div className="recipe-ticket">
-        <article className="recipe-ticket-paper" aria-label="Dough recipe">
+        <article className="recipe-ticket-paper" aria-label={t.recipe}>
           {/* Masthead */}
           <header className="ticket-masthead">
             <div className="ticket-meta">
@@ -182,7 +246,7 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
             <p className="ticket-title">Impasto per la pizza</p>
             <p className="ticket-subtitle">
               {String(numPizzas).padStart(2, '0')} × {doughBallWeight} g
-              {testTubeDough && <span> + 80 g test</span>}
+              {testTubeDough && <span> + 80 g {t.test}</span>}
             </p>
           </header>
 
@@ -190,9 +254,9 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
 
           {/* Column heads */}
           <div className="ticket-colheads" aria-hidden="true">
-            <span>Ingredient</span>
+            <span>{t.ingredient}</span>
             <span>%</span>
-            <span>Weight</span>
+            <span>{t.weight}</span>
           </div>
 
           {/* Ingredient lines */}
@@ -223,7 +287,7 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
           {/* Total + stamp */}
           <div className="ticket-total">
             <div>
-              <span className="ticket-total-label">Total dough</span>
+              <span className="ticket-total-label">{t.total}</span>
               <span className="ticket-total-value" key={totalWeight.toFixed(0)}>
                 {show(grams(totalWeight))}
               </span>
@@ -237,32 +301,30 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
           {isValid ? (
             <div className="ticket-timeline">
               <div className="ticket-timeline-point">
-                <span className="ticket-label">Mix</span>
-                <span className="ticket-timeline-time">{formatTime(now)}</span>
-                <span className="ticket-timeline-day">{formatDay(now)}</span>
+                <span className="ticket-label">{t.mix}</span>
+                <span className="ticket-timeline-time">{formatTime(now, t.locale)}</span>
+                <span className="ticket-timeline-day">{formatDay(now, t.locale)}</span>
               </div>
               <div className="ticket-timeline-track">
                 <span className="ticket-timeline-duration">{formatDuration(recipe.fermentationTime)}</span>
                 <span className="ticket-timeline-line" aria-hidden="true" />
                 <span className="ticket-timeline-detail">
-                  {isColdFerment
-                    ? `${state.coldFermentHours} h cold · ${state.fridgeTemp}°C`
-                    : `at ${state.roomTemp}°C`}
+                  {isColdFerment ? t.cold(state.coldFermentHours, state.fridgeTemp) : t.at(state.roomTemp)}
                 </span>
               </div>
               <div className="ticket-timeline-point ticket-timeline-point--end">
-                <span className="ticket-label">Bake</span>
-                <span className="ticket-timeline-time">{formatTime(bakeAt)}</span>
-                <span className="ticket-timeline-day">{formatDay(bakeAt)}</span>
+                <span className="ticket-label">{t.bake}</span>
+                <span className="ticket-timeline-time">{formatTime(bakeAt, t.locale)}</span>
+                <span className="ticket-timeline-day">{formatDay(bakeAt, t.locale)}</span>
               </div>
             </div>
           ) : (
-            <p className="ticket-warning">Pick a bake time in the future to print your recipe.</p>
+            <p className="ticket-warning">{t.pickFuture}</p>
           )}
 
           {showAdvanced && isValid && (
             <div className="ticket-note">
-              <span className="ticket-label">Mix with water at</span>
+              <span className="ticket-label">{t.waterAt}</span>
               <span className="ticket-note-value">{recipe.requiredWaterTemp.toFixed(1)}°C</span>
             </div>
           )}
@@ -284,11 +346,11 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
       <div className="ticket-actions">
         <button type="button" onClick={handleCopy} disabled={!isValid} className="ticket-action">
           {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
-          {copied ? 'Copied' : 'Copy recipe'}
+          {copied ? t.copied : t.copy}
         </button>
         <button type="button" onClick={() => window.print()} disabled={!isValid} className="ticket-action">
           <Printer className="h-4 w-4" aria-hidden="true" />
-          Print
+          {t.print}
         </button>
       </div>
     </div>

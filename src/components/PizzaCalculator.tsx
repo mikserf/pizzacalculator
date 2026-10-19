@@ -3,6 +3,12 @@ import { PizzaState } from '../types/pizza';
 import { getDefaultBakeTime, calculateRecipe } from '../utils/calculations';
 import CalculatorControls from './CalculatorControls';
 import RecipeDisplay from './RecipeDisplay';
+import { useLang } from '../hooks/useLang';
+
+const T = {
+  sv: { title: 'Pizzadegskalkylator', subtitle: 'Mjöl, vatten, salt, jäst.' },
+  en: { title: 'Pizza Dough Calculator', subtitle: 'Flour, water, salt, yeast.' },
+} as const;
 
 const PizzaCalculator: React.FC = () => {
   const [state, setState] = useState<PizzaState>({
@@ -22,6 +28,7 @@ const PizzaCalculator: React.FC = () => {
   });
 
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const t = T[useLang()];
 
   const updateState = (updates: Partial<PizzaState>) => {
     setState(prevState => ({ ...prevState, ...updates }));
@@ -35,8 +42,8 @@ const PizzaCalculator: React.FC = () => {
         <p className="mb-4 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.28em] text-brand-600 dark:text-brand-300">
           Farina · Acqua · Sale · Lievito
         </p>
-        <h1 className="font-display text-5xl font-bold mb-3 text-ink dark:text-char-100">Pizza Dough Calculator</h1>
-        <p className="font-display text-xl font-normal italic text-ink-muted dark:text-char-400">Flour, water, salt, yeast.</p>
+        <h1 className="font-display text-5xl font-bold mb-3 text-ink dark:text-char-100">{t.title}</h1>
+        <p className="font-display text-xl font-normal italic text-ink-muted dark:text-char-400">{t.subtitle}</p>
         <div className="mx-auto mt-6 h-[5px] w-16 border-y border-ink/50 dark:border-char-400/50" aria-hidden="true" />
       </header>
 

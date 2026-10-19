@@ -4,6 +4,7 @@ import { Lang, LocalizedText, PartyPizza, PizzaIngredient } from '../types/party
 import { newPizzaId } from '../hooks/usePizzaStore';
 import { prepareImage, PreparedImage } from '../lib/image';
 import { photoUrl } from '../lib/photos';
+import { useAuth, validNickname } from '../contexts/AuthContext';
 
 /** What should happen to the pizza's photo when it is saved. */
 export type PhotoChange = { kind: 'keep' } | { kind: 'remove' } | { kind: 'new'; image: PreparedImage };
@@ -40,7 +41,12 @@ const T = {
     photoFailed: 'Kunde inte läsa bilden — prova en annan (JPG, PNG eller WebP).',
     saveFailed: 'Kunde inte spara. Kontrollera anslutningen och försök igen.',
     share: 'Dela med communityn',
-    shareHint: 'Andra kan se, betygsätta och kopiera den. Ditt namn och din profilbild visas.',
+    shareHint: (nick: string) => `Andra kan se, betygsätta och kopiera den. Visas som ${nick}.`,
+    nickname: 'Välj ett smeknamn',
+    nicknameHint: 'Visas med pizzor du delar — ditt Google-namn visas aldrig. Kan ändras under Konto.',
+    nicknamePlaceholder: 't.ex. PizzaKim',
+    nicknameInvalid: 'Smeknamnet måste vara 2–30 tecken.',
+    nicknameTaken: 'Det smeknamnet är redan taget — prova ett annat.',
     shareNeedsPhoto: 'Lägg till ett foto för att kunna dela pizzan.',
   },
   en: {
@@ -74,7 +80,12 @@ const T = {
     photoFailed: "Couldn't read that image — try another one (JPG, PNG or WebP).",
     saveFailed: "Couldn't save. Check your connection and try again.",
     share: 'Share with the community',
-    shareHint: 'Others can see, rate and copy it. Your name and profile picture are shown.',
+    shareHint: (nick: string) => `Others can see, rate and copy it. Shown as ${nick}.`,
+    nickname: 'Choose a nickname',
+    nicknameHint: 'Shown with pizzas you share — your Google name is never shown. You can change it under Account.',
+    nicknamePlaceholder: 'e.g. PizzaKim',
+    nicknameInvalid: 'Nicknames must be 2–30 characters.',
+    nicknameTaken: 'That nickname is taken — try another one.',
     shareNeedsPhoto: 'Add a photo to share this pizza.',
   },
 } as const;
@@ -146,6 +157,9 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [photo, setPhoto] = useState<PhotoChange>({ kind: 'keep' });
   const [share, setShare] = useState(!!pizza?.isPublic);
+  const { profile, updateProfile } = useAuth();
+  const [nickname, setNickname] = useState('');
+  const needsNickname = photoEnabled && !profile?.nickname;
   const [newPreview, setNewPreview] = useState<string | null>(null);
   const [preparing, setPreparing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -221,6 +235,15 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
       return;
     }
     setSaving(true);
+    // First share: save the chosen nickname before the pizza (the database requires it).
+    if (share && previewSrc && needsNickname) {
+      const res = validNickname(nickname) ? await updateProfile({ nickname }) : 'invalid';
+      if (res !== 'ok') {
+        setSaving(false);
+        setError(res === 'taken' ? t.nicknameTaken : res === 'invalid' ? t.nicknameInvalid : t.saveFailed);
+        return;
+      }
+    }
     const ok = await onSave(
       {
         id: pizza?.id ?? newPizzaId(),
@@ -361,8 +384,26 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
                 </button>
               </div>
               <p className="mt-1 font-display text-sm italic text-ink-muted dark:text-char-400">
-                {previewSrc ? t.shareHint : t.shareNeedsPhoto}
+                {!previewSrc ? t.shareNeedsPhoto : profile?.nickname ? t.shareHint(profile.nickname) : t.nicknameHint}
               </p>
+              {share && previewSrc && needsNickname && (
+                <div className="mt-3">
+                  <label htmlFor="share-nickname" className={`mb-1.5 ${labelText}`}>
+                    {t.nickname}
+                  </label>
+                  <input
+                    id="share-nickname"
+                    value={nickname}
+                    maxLength={30}
+                    placeholder={t.nicknamePlaceholder}
+                    onChange={(e) => {
+                      setNickname(e.target.value);
+                      setError(null);
+                    }}
+                    className={`${inputClass} font-display font-bold`}
+                  />
+                </div>
+              )}
             </div>
           )}
 
