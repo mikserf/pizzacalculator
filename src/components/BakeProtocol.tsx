@@ -103,7 +103,8 @@ const BakeProtocol = ({ state, recipe }: BakeProtocolProps) => {
     setDraft((d) =>
       d.id || !d.batchAuto || d.data.batch === autoBatch ? d : { ...d, data: { ...d.data, batch: autoBatch } },
     );
-  }, [autoBatch]);
+    // Also re-run for a fresh protocol or a cleared field, not only when the number changes.
+  }, [autoBatch, draft.id, draft.batchAuto, draft.data.batch]);
 
   useEffect(() => {
     if (!user) {
