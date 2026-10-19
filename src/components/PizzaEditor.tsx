@@ -5,10 +5,10 @@ import { newPizzaId } from '../hooks/usePizzaStore';
 import { prepareImage, PreparedImage } from '../lib/image';
 import { photoUrl } from '../lib/photos';
 import { useAuth, validNickname } from '../contexts/AuthContext';
+import IngredientInput from './IngredientInput';
 import {
   canonicalUnit,
   findIngredient,
-  ingredientSuggestions,
   localizeIngredient,
   UNIT_CODES,
   UNITS,
@@ -473,22 +473,16 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
               <span className={labelText}>{t.ingredients}</span>
               <span className="font-display text-sm italic text-ink-muted dark:text-char-400/80">{t.perPizza}</span>
             </legend>
-            <datalist id="ingredient-suggestions">
-              {ingredientSuggestions(lang).map((n) => (
-                <option key={n} value={n} />
-              ))}
-            </datalist>
             <div className="space-y-2">
               {rows.map((row, i) => (
                 <div key={row.key} className="grid grid-cols-[1fr_2.75rem_5rem_1.75rem] items-center gap-1.5 sm:grid-cols-[1fr_4.5rem_5.5rem_2rem] sm:gap-2">
-                  <input
-                    aria-label={`${t.ingredient} ${i + 1}`}
+                  <IngredientInput
+                    ariaLabel={`${t.ingredient} ${i + 1}`}
                     value={row.name}
-                    list="ingredient-suggestions"
-                    autoComplete="off"
+                    lang={lang}
                     placeholder={t.ingredient}
-                    onChange={(e) => {
-                      updateRow(row.key, { name: e.target.value });
+                    onChange={(name) => {
+                      updateRow(row.key, { name });
                       setError(null);
                     }}
                     className={`${inputClass} min-w-0 px-2.5 text-sm`}

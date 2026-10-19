@@ -171,10 +171,32 @@ export function findIngredient(text: string): LocalizedText | null {
   return catalogIndex.get(norm(text)) ?? null;
 }
 
-/** Name suggestions for the editor, in one language, alphabetical. */
-export function ingredientSuggestions(lang: Lang): string[] {
-  const names = new Set(CATALOG.map(([sv, en]) => (lang === 'sv' ? sv : en)));
-  return Array.from(names).sort((a, b) => a.localeCompare(b, lang));
+/**
+ * Suggestions while typing an ingredient: catalog names in `lang`, best matches
+ * first — the name itself starting with the text, then a translation or other
+ * spelling starting with it, then a word inside the name, then anywhere.
+ */
+export function searchIngredients(query: string, lang: Lang, limit = 6): string[] {
+  const q = norm(query);
+  if (!q) return [];
+  const best = new Map<string, number>();
+  for (const [sv, en, ...aliases] of CATALOG) {
+    const shown = lang === 'sv' ? sv : en;
+    const own = norm(shown);
+    const others = [lang === 'sv' ? en : sv, ...aliases].map(norm);
+    let score = -1;
+    if (own.startsWith(q)) score = 0;
+    else if (others.some((o) => o.startsWith(q))) score = 1;
+    else if (own.split(/[\s(]+/).some((w) => w.startsWith(q))) score = 2;
+    else if ([own, ...others].some((o) => o.includes(q))) score = 3;
+    if (score < 0 || own === q) continue; // nothing to suggest if it's already exact
+    const prev = best.get(shown);
+    if (prev === undefined || score < prev) best.set(shown, score);
+  }
+  return Array.from(best.entries())
+    .sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0], lang))
+    .slice(0, limit)
+    .map(([name]) => name);
 }
 
 /**

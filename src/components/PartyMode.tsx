@@ -120,14 +120,13 @@ const UI = {
   sv: {
     title: 'Party Mode',
     subtitle: 'Nu planerar vi menyn för din fest.',
-    available: 'Tillgängliga pizzor',
     add: 'Lägg till',
     ingredients: (n: number) => `Ingredienser (${n})`,
     selected: 'Valda pizzor',
     total: (n: number) => `${n} totalt`,
     clearAll: 'Rensa alla',
     empty: 'Inga pizzor valda ännu',
-    emptyHint: 'Välj pizzor till vänster för att komma igång',
+    emptyHint: 'Lägg till pizzor från Mina pizzor eller husets meny',
     ingredientsFor: (n: number) => `Ingredienser för ${n} ${n === 1 ? 'pizza' : 'pizzor'}`,
     pizzaCount: (n: number) => `${n} ${n === 1 ? 'pizza' : 'pizzor'}`,
     exportPreview: 'Exportera & förhandsgranska',
@@ -185,14 +184,13 @@ const UI = {
   en: {
     title: 'Party Mode',
     subtitle: "Let's plan the menu for your party.",
-    available: 'Available Pizzas',
     add: 'Add',
     ingredients: (n: number) => `Ingredients (${n})`,
     selected: 'Selected Pizzas',
     total: (n: number) => `${n} total`,
     clearAll: 'Clear All',
     empty: 'No pizzas selected yet',
-    emptyHint: 'Choose pizzas from the left to get started',
+    emptyHint: 'Add pizzas from My pizzas or the house menu',
     ingredientsFor: (n: number) => `Ingredients for ${n} ${n === 1 ? 'pizza' : 'pizzas'}`,
     pizzaCount: (n: number) => `${n} ${n === 1 ? 'pizza' : 'pizzas'}`,
     exportPreview: 'Export & Preview',
@@ -997,21 +995,20 @@ const PartyMode: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* Available Pizzas */}
+          {/* My pizzas */}
           <section className={`${cardClass} self-start`}>
             <div className={cardHeader}>
               <div className="flex items-baseline gap-3">
                 <span className="font-mono text-xs font-semibold tabular-nums text-brand-600 dark:text-brand-300">01</span>
-                <h2 className="font-display text-xl font-bold text-ink dark:text-char-100">{u.available}</h2>
+                <h2 className="font-display text-xl font-bold text-ink dark:text-char-100">{u.myPizzas}</h2>
+                {mine.length > 0 && (
+                  <span className="font-mono text-xs tabular-nums text-ink-muted dark:text-char-400">({mine.length})</span>
+                )}
               </div>
             </div>
-            <div className="space-y-6 p-5 sm:p-6">
-              {/* My pizzas */}
+            <div className="p-5 sm:p-6">
               <div>
-                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                  <h3 className={labelText}>
-                    {u.myPizzas} {mine.length > 0 && <span className="tabular-nums">({mine.length})</span>}
-                  </h3>
+                <div className="mb-3 flex flex-wrap items-center justify-end gap-2">
                   <div className="flex flex-wrap items-center gap-2">
                     {mine.length > 0 && (
                       <button type="button" onClick={exportMyPizzas} className={pillOutline}>
@@ -1108,12 +1105,6 @@ const PartyMode: React.FC = () => {
                 ) : (
                   <div className="space-y-2.5">{mine.map((pizza) => pizzaCard(pizza))}</div>
                 )}
-              </div>
-
-              {/* House menu */}
-              <div className="border-t border-dashed border-paper-400 pt-5 dark:border-char-500">
-                <h3 className={`mb-3 ${labelText}`}>{u.houseMenu}</h3>
-                <div className="space-y-2.5">{house.map((pizza) => pizzaCard(pizza))}</div>
               </div>
             </div>
           </section>
@@ -1221,12 +1212,28 @@ const PartyMode: React.FC = () => {
           </section>
         </div>
 
+        {/* House menu */}
+        <section className={`mt-6 ${cardClass}`}>
+          <div className={cardHeader}>
+            <div className="flex items-baseline gap-3">
+              <span className="font-mono text-xs font-semibold tabular-nums text-brand-600 dark:text-brand-300">03</span>
+              <h2 className="font-display text-xl font-bold text-ink dark:text-char-100">{u.houseMenu}</h2>
+              {house.length > 0 && (
+                <span className="font-mono text-xs tabular-nums text-ink-muted dark:text-char-400">({house.length})</span>
+              )}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 items-start gap-2.5 p-5 sm:p-6 md:grid-cols-2">
+            {house.map((pizza) => pizzaCard(pizza))}
+          </div>
+        </section>
+
         {/* Export & Preview */}
         {selectedPizzas.length > 0 && (
           <section className={`mt-10 ${cardClass}`}>
             <div className={cardHeader}>
               <div className="flex items-baseline gap-3">
-                <span className="font-mono text-xs font-semibold tabular-nums text-brand-600 dark:text-brand-300">03</span>
+                <span className="font-mono text-xs font-semibold tabular-nums text-brand-600 dark:text-brand-300">04</span>
                 <h2 className="font-display text-xl font-bold text-ink dark:text-char-100">{u.exportPreview}</h2>
               </div>
             </div>
