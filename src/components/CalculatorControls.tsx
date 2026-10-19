@@ -24,7 +24,7 @@ const T = {
     ovenTime: 'Ugnstid',
     in6: 'Om 6 h',
     in12: 'Om 12 h',
-    tomorrow: 'I morgon',
+    tomorrow: 'Om 24 timmar',
     in48: 'Om 48 h',
     roomTemperature: 'Rumstemperatur',
     advanced: 'Avancerade inställningar',
@@ -71,7 +71,7 @@ const T = {
     ovenTime: 'Oven time',
     in6: 'In 6h',
     in12: 'In 12h',
-    tomorrow: 'Tomorrow',
+    tomorrow: 'In 24 hours',
     in48: 'In 48h',
     roomTemperature: 'Room Temperature',
     advanced: 'Advanced Settings',
@@ -509,7 +509,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
             onChange={(e) => onUpdate({ bakeTime: e.target.value })}
             className="w-full rounded-md border border-paper-400 bg-white/60 p-3 font-mono tabular-nums text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 dark:border-char-500 dark:bg-char-900/60 dark:text-char-100 dark:[color-scheme:dark]"
           />
-          <div className="mt-2 grid grid-cols-4 gap-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             {[
               { label: t.in6, hours: 6 },
               { label: t.in12, hours: 12 },
@@ -520,7 +520,7 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
                 key={preset.label}
                 type="button"
                 onClick={() => onUpdate({ bakeTime: addHoursFromNow(preset.hours) })}
-                className="rounded-full border border-paper-400 px-2 py-1.5 font-mono text-[0.6875rem] font-medium uppercase tracking-wider text-ink-soft transition-all hover:border-brand-400 hover:text-brand-700 active:scale-[0.97] dark:border-char-500 dark:text-char-300 dark:hover:border-brand-400 dark:hover:text-brand-300"
+                className="flex-auto whitespace-nowrap rounded-full border border-paper-400 px-3 py-1.5 font-mono text-[0.6875rem] font-medium uppercase tracking-wider text-ink-soft transition-all hover:border-brand-400 hover:text-brand-700 active:scale-[0.97] dark:border-char-500 dark:text-char-300 dark:hover:border-brand-400 dark:hover:text-brand-300"
               >
                 {preset.label}
               </button>

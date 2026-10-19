@@ -34,6 +34,24 @@ body {
   font-family: 'Playfair Display', serif;
 }
 
+/* iOS Safari: date/time inputs keep a fixed intrinsic width (overflowing narrow
+   screens) unless their native appearance is turned off. */
+input[type='datetime-local'],
+input[type='date'],
+input[type='time'] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  max-width: 100%;
+  display: block;
+  text-align: left;
+}
+input[type='datetime-local']::-webkit-date-and-time-value,
+input[type='date']::-webkit-date-and-time-value,
+input[type='time']::-webkit-date-and-time-value {
+  text-align: left;
+}
+
 /* Removing number input spinners */
 input[type="number"] { 
   -moz-appearance: textfield; 
@@ -480,6 +498,23 @@ input::-webkit-inner-spin-button {
   transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
 }
 
+.ticket-action--icon {
+  width: 44px; /* comfortable touch target */
+  height: 44px;
+  padding: 0;
+  justify-content: center;
+}
+
+.ticket-action-note {
+  min-height: 1.25rem;
+  margin-top: 6px;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.875rem;
+  color: #8A7863;
+}
+
 .ticket-action:hover:not(:disabled) {
   background: #F6E7D7;
   border-color: #D78A48;
@@ -492,6 +527,10 @@ input::-webkit-inner-spin-button {
 .ticket-action:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.dark .ticket-action-note {
+  color: #A3927F;
 }
 
 .dark .ticket-action {

@@ -374,20 +374,42 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
       </div>
 
       {/* Actions */}
+      {/* Icon-only actions: name via aria-label + tooltip; feedback in the note below. */}
       <div className="ticket-actions">
-        <button type="button" onClick={handleCopy} disabled={!isValid} className="ticket-action">
-          {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
-          {copied ? t.copied : t.copy}
+        <button
+          type="button"
+          onClick={handleCopy}
+          disabled={!isValid}
+          aria-label={t.copy}
+          title={t.copy}
+          className="ticket-action ticket-action--icon"
+        >
+          {copied ? <Check className="h-5 w-5" aria-hidden="true" /> : <Copy className="h-5 w-5" aria-hidden="true" />}
         </button>
-        <button type="button" onClick={handleShare} disabled={!isValid} className="ticket-action">
-          {linkCopied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Share2 className="h-4 w-4" aria-hidden="true" />}
-          {linkCopied ? t.linkCopied : t.share}
+        <button
+          type="button"
+          onClick={handleShare}
+          disabled={!isValid}
+          aria-label={t.share}
+          title={t.share}
+          className="ticket-action ticket-action--icon"
+        >
+          {linkCopied ? <Check className="h-5 w-5" aria-hidden="true" /> : <Share2 className="h-5 w-5" aria-hidden="true" />}
         </button>
-        <button type="button" onClick={() => window.print()} disabled={!isValid} className="ticket-action">
-          <Printer className="h-4 w-4" aria-hidden="true" />
-          {t.print}
+        <button
+          type="button"
+          onClick={() => window.print()}
+          disabled={!isValid}
+          aria-label={t.print}
+          title={t.print}
+          className="ticket-action ticket-action--icon"
+        >
+          <Printer className="h-5 w-5" aria-hidden="true" />
         </button>
       </div>
+      <p role="status" aria-live="polite" className="ticket-action-note">
+        {copied ? t.copied : linkCopied ? t.linkCopied : ''}
+      </p>
     </div>
   );
 };
