@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { clearStoredSession, supabase } from '../lib/supabase';
 
 interface AuthContextValue {
   /** False when the build has no Supabase keys: hide every login UI. */
@@ -32,6 +32,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const user = session?.user ?? null;
+
+  /**
+   * Sign out of this browser only (Supabase's default also logs out every other
+   * device). If the server refuses — e.g. the session was already revoked
+   * elsewhere — forget the stored login anyway so the button always works.
+   */
+  const signOutHere = async () => {
+    if (!supabase) return;
+    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    if (error) {
+      console.warn('Sign-out was refused by the server; clearing the local session.', error.message);
+      clearStoredSession();
+      window.location.reload();
+    }
+  };
   const meta = (user?.user_metadata ?? {}) as Record<string, string | undefined>;
 
   const value: AuthContextValue = {
@@ -53,10 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       if (error) throw error;
     },
-    signOut: async () => {
-      if (!supabase) return;
-      await supabase.auth.signOut();
-    },
+    signOut: signOutHere,
     deleteAccount: async () => {
       if (!supabase || !user) return;
       // Storage files can't be removed from SQL, so delete the photos first.
@@ -68,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       const { error } = await supabase.rpc('delete_my_account');
       if (error) throw error;
-      await supabase.auth.signOut();
+      await signOutHere();
     },
   };
 

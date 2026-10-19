@@ -13,3 +13,14 @@ export const supabase: SupabaseClient | null =
         auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' },
       })
     : null;
+
+/** Forget the login stored in this browser (used when the server refuses a sign-out). */
+export function clearStoredSession(): void {
+  try {
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith('sb-') && k.includes('-auth-token'))
+      .forEach((k) => localStorage.removeItem(k));
+  } catch {
+    /* storage blocked — nothing stored to clear */
+  }
+}
