@@ -5,6 +5,19 @@ import { newPizzaId } from '../hooks/usePizzaStore';
 import { prepareImage, PreparedImage } from '../lib/image';
 import { photoUrl } from '../lib/photos';
 import { useAuth, validNickname } from '../contexts/AuthContext';
+import {
+  canonicalUnit,
+  findIngredient,
+  ingredientSuggestions,
+  localizeIngredient,
+  UNIT_CODES,
+  UNITS,
+  unitCode,
+  UnitCode,
+} from '../lib/ingredients';
+
+/** Select value for a unit that isn't in the fixed list (kept from older pizzas). */
+const CUSTOM_UNIT = 'custom';
 
 /** What should happen to the pizza's photo when it is saved. */
 export type PhotoChange = { kind: 'keep' } | { kind: 'remove' } | { kind: 'new'; image: PreparedImage };
@@ -98,7 +111,9 @@ interface Row {
   key: string;
   name: string;
   amount: string;
+  /** A UnitCode, or CUSTOM_UNIT for an old free-text unit. */
   unit: string;
+  customUnit?: LocalizedText;
   /** The original ingredient, so the other language survives an edit. */
   source?: PizzaIngredient;
 }
@@ -119,14 +134,20 @@ const rowKey = () => `r${++rowCounter}`;
 
 const toRows = (pizza: PartyPizza | null, lang: Lang): Row[] =>
   pizza && pizza.ingredients.length > 0
-    ? pizza.ingredients.map((i) => ({
-        key: rowKey(),
-        name: i.name[lang],
-        amount: String(i.amount),
-        unit: i.unit[lang],
-        source: i,
-      }))
-    : [{ key: rowKey(), name: '', amount: '', unit: lang === 'sv' ? 'gram' : 'grams' }];
+    ? pizza.ingredients.map((original) => {
+        // Known names/units are shown translated, even if the pizza was written in the other language.
+        const i = localizeIngredient(original);
+        const code = unitCode(i.unit);
+        return {
+          key: rowKey(),
+          name: i.name[lang],
+          amount: String(i.amount),
+          unit: code ?? CUSTOM_UNIT,
+          ...(code ? {} : { customUnit: i.unit }),
+          source: i,
+        };
+      })
+    : [{ key: rowKey(), name: '', amount: '', unit: 'g' }];
 
 interface PizzaEditorProps {
   /** The pizza to edit, or null to create a new one. */
@@ -223,11 +244,18 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
       .filter((r) => r.name.trim())
       .map((r) => {
         const amount = parseFloat(r.amount.replace(',', '.'));
+        const text = r.name.trim();
+        // Catalog names are saved in both languages; anything else stays as typed.
+        const name =
+          findIngredient(text) ??
+          (r.source && text === r.source.name[lang] ? r.source.name : updateLocalized(r.source?.name, lang, text));
+        const unit =
+          r.unit === CUSTOM_UNIT ? r.customUnit ?? { sv: '', en: '' } : canonicalUnit(r.unit as UnitCode);
         return {
           ...(r.source?.note ? { note: r.source.note } : {}),
-          name: updateLocalized(r.source?.name, lang, r.name.trim()),
+          name,
           amount: Number.isFinite(amount) && amount > 0 ? amount : 0,
-          unit: updateLocalized(r.source?.unit, lang, r.unit.trim()),
+          unit,
         };
       });
     if (ingredients.length === 0) {
@@ -445,12 +473,19 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
               <span className={labelText}>{t.ingredients}</span>
               <span className="font-display text-sm italic text-ink-muted dark:text-char-400/80">{t.perPizza}</span>
             </legend>
+            <datalist id="ingredient-suggestions">
+              {ingredientSuggestions(lang).map((n) => (
+                <option key={n} value={n} />
+              ))}
+            </datalist>
             <div className="space-y-2">
               {rows.map((row, i) => (
-                <div key={row.key} className="grid grid-cols-[1fr_3.25rem_3.75rem_2rem] items-center gap-1.5 sm:grid-cols-[1fr_4.5rem_4.5rem_2rem] sm:gap-2">
+                <div key={row.key} className="grid grid-cols-[1fr_2.75rem_5rem_1.75rem] items-center gap-1.5 sm:grid-cols-[1fr_4.5rem_5.5rem_2rem] sm:gap-2">
                   <input
                     aria-label={`${t.ingredient} ${i + 1}`}
                     value={row.name}
+                    list="ingredient-suggestions"
+                    autoComplete="off"
                     placeholder={t.ingredient}
                     onChange={(e) => {
                       updateRow(row.key, { name: e.target.value });
@@ -466,13 +501,19 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
                     onChange={(e) => updateRow(row.key, { amount: e.target.value })}
                     className={`${inputClass} px-2 text-right font-mono text-sm tabular-nums`}
                   />
-                  <input
+                  <select
                     aria-label={`${t.unit} ${i + 1}`}
                     value={row.unit}
-                    placeholder={t.unit}
                     onChange={(e) => updateRow(row.key, { unit: e.target.value })}
-                    className={`${inputClass} px-2 font-mono text-xs`}
-                  />
+                    className={`${inputClass.replace('px-3 ', '')} pl-1.5 pr-0.5 font-mono text-xs`}
+                  >
+                    {UNIT_CODES.map((code) => (
+                      <option key={code} value={code}>
+                        {UNITS[code][lang][1]}
+                      </option>
+                    ))}
+                    {row.customUnit && <option value={CUSTOM_UNIT}>{row.customUnit[lang] || '—'}</option>}
+                  </select>
                   <button
                     type="button"
                     aria-label={t.removeIngredient}
@@ -488,7 +529,10 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
             <button
               type="button"
               onClick={() =>
-                setRows((prev) => [...prev, { key: rowKey(), name: '', amount: '', unit: prev[prev.length - 1]?.unit ?? '' }])
+                setRows((prev) => {
+                  const last = prev[prev.length - 1]?.unit;
+                  return [...prev, { key: rowKey(), name: '', amount: '', unit: last && last !== CUSTOM_UNIT ? last : 'g' }];
+                })
               }
               className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-dashed border-paper-400 px-3 py-1.5 font-mono text-[0.6875rem] font-medium uppercase tracking-wider text-ink-soft transition-all hover:border-brand-400 hover:text-brand-700 active:scale-[0.97] dark:border-char-500 dark:text-char-300 dark:hover:border-brand-400 dark:hover:text-brand-300"
             >

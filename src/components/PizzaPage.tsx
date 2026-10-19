@@ -12,6 +12,7 @@ import {
   setMyRating,
 } from '../lib/community';
 import { photoUrl } from '../lib/photos';
+import { localizeIngredient, unitLabel } from '../lib/ingredients';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useLang } from '../hooks/useLang';
@@ -314,11 +315,11 @@ const PizzaPage = () => {
               <span className="font-display text-sm italic text-ink-muted dark:text-char-400">{t.perPizza}</span>
             </h2>
             <ul className="divide-y divide-dashed divide-paper-400 dark:divide-char-500">
-              {pizza.ingredients.map((ing, i) => (
+              {pizza.ingredients.map(localizeIngredient).map((ing, i) => (
                 <li key={i} className="flex items-baseline justify-between gap-3 py-2">
                   <span className="text-ink dark:text-char-100">{ing.name[lang]}</span>
                   <span className="shrink-0 font-mono text-sm font-semibold tabular-nums text-brand-700 dark:text-brand-300">
-                    {formatAmount(ing.amount)} {ing.unit[lang]}
+                    {formatAmount(ing.amount)} {unitLabel(ing.unit, ing.amount, lang)}
                   </span>
                 </li>
               ))}

@@ -24,11 +24,15 @@ import { imageToJpegDataUrl } from '../lib/image';
 import { usePizzaStore, isMyPizza, isValidPizza, newPizzaId } from '../hooks/usePizzaStore';
 import { useAuth } from '../contexts/AuthContext';
 import { useLang } from '../hooks/useLang';
+import { localizeIngredient, unitLabel } from '../lib/ingredients';
 
 interface IngredientTotal {
   name: string;
   amount: number;
+  /** Unit as stored (canonical plural), used for matching. */
   unit: string;
+  /** Unit as shown for this amount ("1 nypa" / "2 nypor"). */
+  unitText?: string;
   note?: string;
 }
 
@@ -106,7 +110,7 @@ const IngredientRow = ({
         have ? 'text-ink-muted dark:text-char-400' : 'text-brand-700 dark:text-brand-300',
       ].join(' ')}
     >
-      {formatAmount(ing.amount)} {ing.unit}
+      {formatAmount(ing.amount)} {ing.unitText ?? ing.unit}
     </p>
   </li>
 );
@@ -250,9 +254,11 @@ const getIngredientTotals = (items: SelectedPizza[], lang: Lang): IngredientTota
   const map = new Map<string, IngredientTotal>();
   items.forEach((pizza) => {
     pizza.ingredients.forEach((ing) => {
-      const name = ing.name[lang];
-      const unit = ing.unit[lang];
-      const key = `${name}||${unit}`;
+      // Known ingredients/units are translated, so pizzas written in either language add up.
+      const local = localizeIngredient(ing);
+      const name = local.name[lang];
+      const unit = local.unit[lang];
+      const key = `${name.trim().toLowerCase()}||${unit.trim().toLowerCase()}`;
       const existing = map.get(key);
       if (existing) {
         existing.amount += ing.amount * pizza.quantity;
@@ -266,7 +272,9 @@ const getIngredientTotals = (items: SelectedPizza[], lang: Lang): IngredientTota
       }
     });
   });
-  return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  return Array.from(map.values())
+    .map((t) => ({ ...t, unitText: unitLabel(t.unit, t.amount, lang) }))
+    .sort((a, b) => a.name.localeCompare(b.name, lang));
 };
 
 const PartyMode: React.FC = () => {
@@ -577,7 +585,7 @@ const PartyMode: React.FC = () => {
         paragraphs.push({ text: description, size: 12.5, style: 'italic', color: INK, lh: 5.4, maxW: contentW - 8 });
       }
 
-      const ingText = pizza.ingredients.map((i) => i.name[pdfLang]).join(' · ');
+      const ingText = pizza.ingredients.map((i) => localizeIngredient(i).name[pdfLang]).join(' · ');
       paragraphs.push({ text: ingText, size: 9.5, style: 'normal', color: MUTED, lh: 4.2, maxW: contentW - 24 });
 
       // Measure wrapped lines so we know the exact block height
@@ -784,7 +792,7 @@ const PartyMode: React.FC = () => {
       pdf.text(nameLines, col.nameX, firstBaseline);
 
       // Amount (right-aligned) with a dotted leader
-      const amountText = `${formatAmount(ing.amount)} ${ing.unit}`;
+      const amountText = `${formatAmount(ing.amount)} ${ing.unitText ?? ing.unit}`;
       pdf.setFont('times', 'bold');
       pdf.setFontSize(10);
       const amountW = pdf.getTextWidth(amountText);
@@ -969,7 +977,12 @@ const PartyMode: React.FC = () => {
         </button>
 
         {expandedAvailable[key] &&
-          ingredientList(pizza.ingredients.map((i) => ({ name: i.name[lang], amount: i.amount, unit: i.unit[lang] })))}
+          ingredientList(
+            pizza.ingredients.map((i) => {
+              const l = localizeIngredient(i);
+              return { name: l.name[lang], amount: i.amount, unit: unitLabel(l.unit, i.amount, lang) };
+            }),
+          )}
       </div>
     );
   };
@@ -1194,11 +1207,11 @@ const PartyMode: React.FC = () => {
 
                       {expandedSelected[pizza.id] &&
                         ingredientList(
-                          pizza.ingredients.map((i) => ({
-                            name: i.name[lang],
-                            amount: i.amount * pizza.quantity,
-                            unit: i.unit[lang],
-                          })),
+                          pizza.ingredients.map((i) => {
+                            const l = localizeIngredient(i);
+                            const amount = i.amount * pizza.quantity;
+                            return { name: l.name[lang], amount, unit: unitLabel(l.unit, amount, lang) };
+                          }),
                         )}
                     </div>
                   ))}
@@ -1283,7 +1296,7 @@ const PartyMode: React.FC = () => {
                             </p>
                           )}
                           <p className="mt-2 text-sm text-ink-muted dark:text-char-400">
-                            {pizza.ingredients.map((ing) => ing.name[lang]).join(' · ')}
+                            {pizza.ingredients.map((ing) => localizeIngredient(ing).name[lang]).join(' · ')}
                           </p>
                         </div>
                       ))}
