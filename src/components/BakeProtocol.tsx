@@ -58,17 +58,15 @@ const BakeProtocol = ({ state, recipe }: BakeProtocolProps) => {
   const [draft, setDraft] = useState<Draft>(
     () => loadDraft() ?? { id: null, data: { ...emptyProtocol(), ...calc }, touched: [], batchAuto: true },
   );
-  /** Recipe snapshot of a loaded saved log (kept when it's updated). */
-  const [savedRecipe, setSavedRecipe] = useState<Record<string, unknown> | null>(null);
   const [logs, setLogs] = useState<SavedLog[] | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const p = draft.data;
 
-  // New protocols follow the calculator for every auto field the user hasn't edited.
+  // The protocol in progress always follows the calculator (also after saving),
+  // except for fields the user has typed into. Saved logs in Deglabbet stay as saved.
   useEffect(() => {
     setDraft((d) => {
-      if (d.id) return d;
       let changed = false;
       const data = { ...d.data };
       for (const k of AUTO_FIELDS) {
@@ -151,20 +149,18 @@ const BakeProtocol = ({ state, recipe }: BakeProtocolProps) => {
   };
 
   const syncFromCalculator = () => {
-    setSavedRecipe(null);
     setDraft((d) => ({ ...d, data: { ...d.data, ...calc }, touched: [] }));
   };
 
   const startNew = () => {
     if (!window.confirm(t.confirmNew)) return;
-    setSavedRecipe(null);
     setStatus(null);
     setDraft({ id: null, data: { ...emptyProtocol(), ...calc }, touched: [], batchAuto: true });
   };
 
   const inProgress = !!draft.id || (!draft.batchAuto && p.batch !== '') || hasUserInput(p);
 
-  const snapshot = savedRecipe ?? recipeSnapshot(state, recipe);
+  const snapshot = recipeSnapshot(state, recipe);
   const summary = recipeSummary(snapshot, lang);
 
   const save = async () => {
@@ -173,7 +169,6 @@ const BakeProtocol = ({ state, recipe }: BakeProtocolProps) => {
     try {
       const title = p.batch.trim() || `${t.pizzas(state.numPizzas)} · ${state.doughBallWeight} g`;
       const saved = await saveLog(draft.id, p, snapshot, title);
-      setSavedRecipe(saved.recipe);
       setDraft((d) => ({ ...d, id: saved.id }));
       setLogs((prev) => [saved, ...(prev ?? []).filter((l) => l.id !== saved.id)]);
       setStatus(t.saved);
@@ -283,10 +278,12 @@ const BakeProtocol = ({ state, recipe }: BakeProtocolProps) => {
                   {t.signInToSave}
                 </button>
               ))}
-            <button type="button" onClick={syncFromCalculator} className={pill}>
-              <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
-              {t.syncCalc}
-            </button>
+            {draft.touched.length > 0 && (
+              <button type="button" onClick={syncFromCalculator} className={pill}>
+                <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+                {t.syncCalc}
+              </button>
+            )}
             <button type="button" onClick={startNew} className={pill}>
               <FilePlus2 className="h-3.5 w-3.5" aria-hidden="true" />
               {t.newProtocol}

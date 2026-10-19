@@ -22,9 +22,8 @@ const T = {
     fridgeTemp: 'Kylskåpstemperatur',
     whenBake: 'När vill du grädda?',
     ovenTime: 'Ugnstid',
-    in6: 'Om 6 h',
     in12: 'Om 12 h',
-    tomorrow: 'Om 24 timmar',
+    in24: 'Om 24 h',
     in48: 'Om 48 h',
     roomTemperature: 'Rumstemperatur',
     advanced: 'Avancerade inställningar',
@@ -69,9 +68,8 @@ const T = {
     fridgeTemp: 'Fridge Temperature',
     whenBake: 'When do you want to bake?',
     ovenTime: 'Oven time',
-    in6: 'In 6h',
     in12: 'In 12h',
-    tomorrow: 'In 24 hours',
+    in24: 'In 24h',
     in48: 'In 48h',
     roomTemperature: 'Room Temperature',
     advanced: 'Advanced Settings',
@@ -511,9 +509,8 @@ const CalculatorControls: React.FC<CalculatorControlsProps> = ({ state, onUpdate
           />
           <div className="mt-2 flex flex-wrap gap-2">
             {[
-              { label: t.in6, hours: 6 },
               { label: t.in12, hours: 12 },
-              { label: t.tomorrow, hours: 24 },
+              { label: t.in24, hours: 24 },
               { label: t.in48, hours: 48 },
             ].map((preset) => (
               <button

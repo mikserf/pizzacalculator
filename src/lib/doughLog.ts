@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import type { PizzaState, RecipeResult } from '../types/pizza';
+import { formatPercentValue } from '../utils/format';
 
 /* ------------------------------------------------------------------ */
 /* Protocol data                                                       */
@@ -161,7 +162,7 @@ export function calculatorValues(state: PizzaState, recipe: RecipeResult): Recor
     saltG: fmt(recipe.salt, 0),
     saltPct: fmt(state.saltPercent, 1),
     yeastG: fmt(recipe.yeast, 2),
-    yeastPct: fmt(yeastPct, 2),
+    yeastPct: yeastPct > 0 ? formatPercentValue(yeastPct) : '',
     roomTemp: String(state.roomTemp),
     fermentTemp: state.isColdFerment ? String(state.fridgeTemp) : String(state.roomTemp),
     totalHours: fmt(recipe.fermentationTime, 1),

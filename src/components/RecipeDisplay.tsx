@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Wheat, Droplet, Diamond, FlaskConical, Scissors, Copy, Check, Printer, Share2 } from 'lucide-react';
 import { PizzaState, RecipeResult } from '../types/pizza';
 import { useLang } from '../hooks/useLang';
+import { formatPercentValue } from '../utils/format';
+import AnimatedNumber from './AnimatedNumber';
 
 const T = {
   sv: {
@@ -82,6 +84,10 @@ interface IngredientLine {
   italian: string;
   percent: string;
   value: string;
+  /** Raw numbers for the counting animation (null while the recipe is invalid). */
+  amount: number | null;
+  decimals: number;
+  pct: number | null;
   sub?: string;
 }
 
@@ -91,11 +97,7 @@ interface IngredientLine {
 
 const grams = (v: number, decimals = 0) => `${v.toFixed(decimals)} g`;
 
-const percent = (v: number) => {
-  if (v >= 10) return `${Math.round(v)}%`;
-  if (v >= 1) return `${v.toFixed(1)}%`;
-  return `${v.toFixed(2)}%`;
-};
+const percent = (v: number) => `${formatPercentValue(v)}%`;
 
 const formatStamp = (d: Date, locale: string) =>
   d.toLocaleString(locale, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
@@ -199,15 +201,45 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
   const show = (v: string) => (isValid ? v : '—');
 
   const ingredients: IngredientLine[] = [
-    { Icon: Wheat, label: t.flour, italian: 'farina', percent: '100%', value: show(grams(recipe.flour)) },
-    { Icon: Droplet, label: t.water, italian: 'acqua', percent: percent(waterPercent), value: show(grams(recipe.water)) },
-    { Icon: Diamond, label: t.salt, italian: 'sale', percent: percent(saltPercent), value: show(grams(recipe.salt)) },
+    {
+      Icon: Wheat,
+      label: t.flour,
+      italian: 'farina',
+      percent: '100%',
+      value: show(grams(recipe.flour)),
+      amount: isValid ? recipe.flour : null,
+      decimals: 0,
+      pct: 100,
+    },
+    {
+      Icon: Droplet,
+      label: t.water,
+      italian: 'acqua',
+      percent: percent(waterPercent),
+      value: show(grams(recipe.water)),
+      amount: isValid ? recipe.water : null,
+      decimals: 0,
+      pct: waterPercent,
+    },
+    {
+      Icon: Diamond,
+      label: t.salt,
+      italian: 'sale',
+      percent: percent(saltPercent),
+      value: show(grams(recipe.salt)),
+      amount: isValid ? recipe.salt : null,
+      decimals: 0,
+      pct: saltPercent,
+    },
     {
       Icon: FlaskConical,
       label: t.yeast,
       italian: 'lievito fresco',
       percent: isValid ? percent(yeastPercent) : '—',
       value: show(grams(recipe.yeast, 2)),
+      amount: isValid ? recipe.yeast : null,
+      decimals: 2,
+      pct: isValid ? yeastPercent : null,
     },
   ];
 
@@ -292,7 +324,7 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
 
           {/* Ingredient lines */}
           <ul className="ticket-list">
-            {ingredients.map(({ Icon, label, italian, percent: pct, value, sub }) => (
+            {ingredients.map(({ Icon, label, italian, pct, amount, decimals, sub }) => (
               <li key={label} className="ticket-item">
                 <div className="ticket-item-row">
                   <span className="ticket-item-name">
@@ -303,9 +335,11 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
                     </span>
                   </span>
                   <span className="ticket-leader" aria-hidden="true" />
-                  <span className="ticket-item-pct">{pct}</span>
-                  <span key={value} className="ticket-item-value">
-                    {value}
+                  <span className="ticket-item-pct">
+                    {pct === null ? '—' : <AnimatedNumber value={pct} format={percent} />}
+                  </span>
+                  <span className="ticket-item-value">
+                    {amount === null ? '—' : <AnimatedNumber value={amount} format={(v) => grams(v, decimals)} />}
                   </span>
                 </div>
                 {sub && <p className="ticket-item-sub">{sub}</p>}
@@ -319,8 +353,8 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
           <div className="ticket-total">
             <div>
               <span className="ticket-total-label">{t.total}</span>
-              <span className="ticket-total-value" key={totalWeight.toFixed(0)}>
-                {show(grams(totalWeight))}
+              <span className="ticket-total-value">
+                {isValid ? <AnimatedNumber value={totalWeight} format={(v) => grams(v)} /> : '—'}
               </span>
             </div>
             <HydrationStamp hydration={waterPercent} />
