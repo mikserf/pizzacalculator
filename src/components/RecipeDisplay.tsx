@@ -1,9 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Wheat, Droplet, Diamond, FlaskConical, Scissors, Copy, Check, Printer, Share2 } from 'lucide-react';
 import { PizzaState, RecipeResult } from '../types/pizza';
 import { useLang } from '../hooks/useLang';
 import { formatPercentValue } from '../utils/format';
 import AnimatedNumber from './AnimatedNumber';
+import QrCode from './QrCode';
+import { printLink } from '../lib/recipeLink';
 
 const T = {
   sv: {
@@ -29,6 +31,8 @@ const T = {
     linkCopied: 'Länk kopierad',
     shareTitle: 'Pizzadegsrecept',
     print: 'Skriv ut',
+    qrCaption: 'Skanna för receptet',
+    qrLabel: 'QR-kod som öppnar det här receptet',
     test: 'test',
     plainTitle: 'PIZZADEG',
     plainBake: 'Grädda',
@@ -61,6 +65,8 @@ const T = {
     linkCopied: 'Link copied',
     shareTitle: 'Pizza dough recipe',
     print: 'Print',
+    qrCaption: 'Scan for the recipe',
+    qrLabel: 'QR code that opens this recipe',
     test: 'test',
     plainTitle: 'PIZZA DOUGH',
     plainBake: 'Bake',
@@ -116,35 +122,6 @@ const formatDuration = (hours: number) => {
 /* ------------------------------------------------------------------ */
 /* Decorative pieces                                                   */
 /* ------------------------------------------------------------------ */
-
-/** Deterministic barcode generated from the recipe numbers. */
-function Barcode({ seed }: { seed: string }) {
-  const bars = useMemo(() => {
-    const out: { x: number; w: number }[] = [];
-    let x = 0;
-    const digits = seed.replace(/\D/g, '').padEnd(28, '7').slice(0, 28);
-    for (let i = 0; i < digits.length; i++) {
-      const d = Number(digits[i]);
-      const w = 1 + (d % 3);
-      out.push({ x, w });
-      x += w + 1 + ((d + i) % 3);
-    }
-    return { bars: out, width: x };
-  }, [seed]);
-
-  return (
-    <svg
-      className="ticket-barcode"
-      viewBox={`0 0 ${bars.width} 32`}
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      {bars.bars.map((b, i) => (
-        <rect key={i} x={b.x} y={0} width={b.w} height={32} fill="currentColor" />
-      ))}
-    </svg>
-  );
-}
 
 /** Round rubber stamp showing the hydration, pressed slightly crooked onto the paper. */
 function HydrationStamp({ hydration }: { hydration: number }) {
@@ -396,7 +373,11 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
 
           {/* Footer */}
           <footer className="ticket-foot">
-            <Barcode seed={`${ticketNo}${recipe.flour.toFixed(0)}${recipe.water.toFixed(0)}${doughBallWeight}`} />
+            {/* Scan the printed ticket to reopen this exact recipe (with its bake time). */}
+            <div className="ticket-qr">
+              <QrCode value={printLink(state)} label={t.qrLabel} className="ticket-qr-code" />
+              <span className="ticket-qr-caption">{t.qrCaption}</span>
+            </div>
             <p className="ticket-sign">Grazie &amp; buon appetito</p>
             <div className="ticket-footer" aria-hidden="true">
               <span className="ticket-footer-line" />

@@ -27,6 +27,8 @@ const BOOLEANS: { key: BoolKey; param: string }[] = [
   { key: 'testTubeDough', param: 'tt' },
 ];
 const HOURS_PARAM = 't';
+/** Exact bake time for printed tickets: local YYMMDDHHmm, e.g. 2610211900. */
+const AT_PARAM = 'at';
 const MAX_HOURS = 24 * 14;
 
 /** "2026-10-20T19:00" in local time, the format the bake-time input uses. */
@@ -49,8 +51,12 @@ export function stateFromSearch(search: string): Partial<PizzaState> {
     const raw = params.get(param);
     if (raw !== null) out[key] = raw === '1';
   }
+  const at = parseAt(params.get(AT_PARAM));
   const hours = Number(params.get(HOURS_PARAM));
-  if (params.has(HOURS_PARAM) && Number.isFinite(hours) && hours > 0 && hours <= MAX_HOURS) {
+  if (at && at.getTime() > Date.now()) {
+    // A printed ticket: keep its exact bake time while it's still ahead.
+    out.bakeTime = formatLocalDateTime(at);
+  } else if (params.has(HOURS_PARAM) && Number.isFinite(hours) && hours > 0 && hours <= MAX_HOURS) {
     const at = new Date(Date.now() + hours * 3600 * 1000);
     at.setMinutes(Math.round(at.getMinutes() / 5) * 5, 0, 0); // tidy to 5 minutes
     out.bakeTime = formatLocalDateTime(at);
@@ -94,4 +100,38 @@ export function linkFromRecipe(recipe: Partial<PizzaState> | Record<string, unkn
   }
   const qs = params.toString();
   return qs ? `/?${qs}` : '/';
+}
+
+const parseAt = (raw: string | null): Date | null => {
+  const m = raw ? /^(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(raw) : null;
+  if (!m) return null;
+  const d = new Date(2000 + Number(m[1]), Number(m[2]) - 1, Number(m[3]), Number(m[4]), Number(m[5]));
+  return Number.isNaN(d.getTime()) ? null : d;
+};
+
+/** Standard recipe: settings equal to these are left out of the printed link. */
+const STANDARD: Partial<Record<string, string>> = {
+  w: '265', n: '6', h: '66', s: '2.8', rt: '20', ch: '24', ft: '4', dt: '20', ff: '0.8', cf: '0', tt: '0',
+};
+
+/**
+ * Full link for the QR code on a printed ticket: only non-standard settings
+ * (shorter link = simpler code), plus the exact bake time instead of "hours from now".
+ */
+export function printLink(state: PizzaState, origin = window.location.origin): string {
+  const params = new URLSearchParams(linkFromRecipe(state).slice(2));
+  if (!state.isColdFerment) {
+    params.delete('ch');
+    params.delete('ft');
+  }
+  for (const [k, v] of Array.from(params.entries())) if (STANDARD[k] === v) params.delete(k);
+  const bake = new Date(state.bakeTime);
+  if (!Number.isNaN(bake.getTime())) {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    params.set(
+      AT_PARAM,
+      `${pad(bake.getFullYear() % 100)}${pad(bake.getMonth() + 1)}${pad(bake.getDate())}${pad(bake.getHours())}${pad(bake.getMinutes())}`,
+    );
+  }
+  return `${origin}/?${params.toString()}`;
 }

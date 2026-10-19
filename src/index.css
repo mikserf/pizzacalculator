@@ -444,13 +444,34 @@ input::-webkit-inner-spin-button {
   text-align: center;
 }
 
-.ticket-barcode {
+/* QR code where a receipt would have its barcode: scan to reopen the recipe */
+.ticket-qr {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ticket-qr-code {
   display: block;
-  width: 70%;
-  height: 34px;
-  margin: 0 auto;
-  color: var(--ticket-ink);
-  opacity: 0.85;
+  width: 92px;
+  height: 92px;
+  border-radius: 3px;
+}
+
+.ticket-qr-caption {
+  font-family: var(--ticket-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ticket-muted);
+}
+
+@media print {
+  .ticket-qr-code {
+    width: 24mm;
+    height: 24mm;
+  }
 }
 
 .ticket-sign {
