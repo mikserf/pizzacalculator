@@ -39,6 +39,9 @@ const T = {
     saving: 'Sparar…',
     photoFailed: 'Kunde inte läsa bilden — prova en annan (JPG, PNG eller WebP).',
     saveFailed: 'Kunde inte spara. Kontrollera anslutningen och försök igen.',
+    share: 'Dela med communityn',
+    shareHint: 'Andra kan se, betygsätta och kopiera den. Ditt namn och din profilbild visas.',
+    shareNeedsPhoto: 'Lägg till ett foto för att kunna dela pizzan.',
   },
   en: {
     newTitle: 'New pizza',
@@ -70,6 +73,9 @@ const T = {
     saving: 'Saving…',
     photoFailed: "Couldn't read that image — try another one (JPG, PNG or WebP).",
     saveFailed: "Couldn't save. Check your connection and try again.",
+    share: 'Share with the community',
+    shareHint: 'Others can see, rate and copy it. Your name and profile picture are shown.',
+    shareNeedsPhoto: 'Add a photo to share this pizza.',
   },
 } as const;
 
@@ -139,6 +145,7 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
   const [rows, setRows] = useState<Row[]>(() => toRows(pizza, lang));
   const [error, setError] = useState<string | null>(null);
   const [photo, setPhoto] = useState<PhotoChange>({ kind: 'keep' });
+  const [share, setShare] = useState(!!pizza?.isPublic);
   const [newPreview, setNewPreview] = useState<string | null>(null);
   const [preparing, setPreparing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -221,6 +228,7 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
         description: updateLocalized(pizza?.description, lang, description.trim()),
         ingredients,
         ...(pizza?.imagePath ? { imagePath: pizza.imagePath } : {}),
+        ...(share && previewSrc ? { isPublic: true } : {}),
       },
       photo,
     );
@@ -297,6 +305,7 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
                       onClick={() => {
                         setPhoto({ kind: 'remove' });
                         setNewPreview(null);
+                        setShare(false);
                       }}
                       disabled={saving}
                       className="font-mono text-[0.6875rem] font-medium uppercase tracking-wider text-ink-muted transition-colors hover:text-brand-700 dark:text-char-400 dark:hover:text-brand-300"
@@ -328,6 +337,34 @@ const PizzaEditor: React.FC<PizzaEditorProps> = ({
               </button>
             )}
           </div>
+
+          {photoEnabled && (
+            <div className="rounded-md border border-dashed border-paper-400 px-4 py-3 dark:border-char-500">
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm font-medium text-ink dark:text-char-100">{t.share}</span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={share && !!previewSrc}
+                  aria-label={t.share}
+                  disabled={!previewSrc || saving}
+                  onClick={() => setShare((v) => !v)}
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 disabled:opacity-40 ${
+                    share && previewSrc ? 'bg-brand-600 dark:bg-brand-400' : 'bg-paper-400 dark:bg-char-600'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 ${
+                      share && previewSrc ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              <p className="mt-1 font-display text-sm italic text-ink-muted dark:text-char-400">
+                {previewSrc ? t.shareHint : t.shareNeedsPhoto}
+              </p>
+            </div>
+          )}
 
           <div>
             <label htmlFor="pizza-name" className={`mb-2 ${labelText}`}>

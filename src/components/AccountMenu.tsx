@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { LogIn, LogOut, Shield, UserRound } from 'lucide-react';
+import { Gavel, LogIn, LogOut, Shield, UserRound } from 'lucide-react';
+import { fetchIsAdmin } from '../lib/community';
 import { useAuth } from '../contexts/AuthContext';
 
 const pill =
@@ -8,7 +9,7 @@ const pill =
 const menuItem =
   'flex w-full items-center gap-2.5 rounded px-3 py-2 text-left font-mono text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-ink-soft transition-colors hover:bg-paper-100 hover:text-brand-700 dark:text-char-300 dark:hover:bg-char-700 dark:hover:text-brand-300';
 
-function Avatar({ url, name, size = 'h-8 w-8' }: { url: string | null; name: string | null; size?: string }) {
+export function Avatar({ url, name, size = 'h-8 w-8' }: { url: string | null; name: string | null; size?: string }) {
   const [broken, setBroken] = useState(false);
   if (url && !broken) {
     return (
@@ -34,7 +35,13 @@ function Avatar({ url, name, size = 'h-8 w-8' }: { url: string | null; name: str
 export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
   const { enabled, loading, user, displayName, avatarUrl, signInWithGoogle, signOut } = useAuth();
   const [open, setOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (user) fetchIsAdmin().then(setIsAdmin);
+    else setIsAdmin(false);
+  }, [user]);
 
   useEffect(() => {
     if (!open) return;
@@ -95,6 +102,20 @@ export function AccountMenu({ onNavigate }: { onNavigate?: () => void }) {
               <Shield className="h-4 w-4" aria-hidden="true" />
               Privacy &amp; account
             </Link>
+            {isAdmin && (
+              <Link
+                to="/admin"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  onNavigate?.();
+                }}
+                className={menuItem}
+              >
+                <Gavel className="h-4 w-4" aria-hidden="true" />
+                Moderation
+              </Link>
+            )}
             <button
               type="button"
               role="menuitem"

@@ -58,7 +58,7 @@ export const isValidPizza = (p: unknown): p is PartyPizza => {
 };
 
 // ------------------------------------------------------------- Cloud mapping
-const COLUMNS = 'id, name, description, ingredients, image_path';
+const COLUMNS = 'id, name, description, ingredients, image_path, is_public';
 
 interface PizzaRow {
   id: string;
@@ -66,6 +66,7 @@ interface PizzaRow {
   description: PartyPizza['description'];
   ingredients: PartyPizza['ingredients'];
   image_path: string | null;
+  is_public: boolean;
 }
 
 const toRow = (p: PartyPizza): PizzaRow => ({
@@ -74,11 +75,13 @@ const toRow = (p: PartyPizza): PizzaRow => ({
   description: p.description,
   ingredients: p.ingredients,
   image_path: p.imagePath ?? null,
+  is_public: !!p.isPublic && !!p.imagePath,
 });
 
-const fromRow = ({ image_path, ...rest }: PizzaRow): PartyPizza => ({
+const fromRow = ({ image_path, is_public, ...rest }: PizzaRow): PartyPizza => ({
   ...rest,
   ...(image_path ? { imagePath: image_path } : {}),
+  ...(is_public ? { isPublic: true } : {}),
 });
 
 type StoreError = 'load' | 'save' | 'delete' | 'upload';
@@ -178,9 +181,9 @@ export function usePizzaStore() {
   /** Photos only make sense in the account that owns them; drop anyone else's. */
   const ownPhotoOnly = useCallback(
     (p: PartyPizza): PartyPizza => {
-      if (!p.imagePath || (userId && p.imagePath.startsWith(`${userId}/`))) return p;
       const rest = { ...p };
-      delete rest.imagePath;
+      delete rest.isPublic; // never publish something just by importing it
+      if (rest.imagePath && !(userId && rest.imagePath.startsWith(`${userId}/`))) delete rest.imagePath;
       return rest;
     },
     [userId],

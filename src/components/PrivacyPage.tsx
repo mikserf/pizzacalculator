@@ -56,11 +56,29 @@ const PrivacyPage: React.FC = () => {
           <p>We receive and store only:</p>
           <ul className="list-disc space-y-1 pl-5">
             <li>your name, email address and profile picture from Google, to show who is signed in;</li>
-            <li>the pizzas you create (name, description and ingredients).</li>
+            <li>the pizzas you create (name, description, ingredients and photo);</li>
+            <li>the star ratings you give, and any reports you send.</li>
           </ul>
           <p>
             We never see your Google password, and we don't use your data for advertising or share it with anyone.
           </p>
+        </Section>
+
+        <Section title="If you share a pizza with the community">
+          <p>
+            Shared pizzas are public: anyone can see the photo, name, description and ingredients, together with your
+            Google display name and profile picture. Others can rate and copy them. Individual ratings are never shown,
+            only the average and the number of ratings. You can stop sharing at any time in Party Mode.
+          </p>
+        </Section>
+
+        <Section title="Community rules">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Share pizzas, and photos you took yourself or have the right to use.</li>
+            <li>No offensive, hateful or explicit content, no spam or advertising, no personal information.</li>
+            <li>Rate honestly. Report anything that breaks these rules with the Report link on the pizza.</li>
+          </ul>
+          <p>Moderators may hide pizzas that break the rules.</p>
         </Section>
 
         <Section title="Where it is stored">
@@ -80,8 +98,8 @@ const PrivacyPage: React.FC = () => {
         {enabled && user && (
           <Section title="Delete my account and data">
             <p>
-              This permanently deletes your account and every pizza saved to it. Pizzas saved only on this device are
-              not affected.
+              This permanently deletes your account and everything saved to it: your pizzas and photos (including
+              shared ones), ratings and reports. Pizzas saved only on this device are not affected.
             </p>
             <label htmlFor="confirm-delete" className={`mt-3 block ${labelText}`}>
               Type DELETE to confirm

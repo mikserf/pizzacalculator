@@ -54,7 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await supabase.auth.signOut();
     },
     deleteAccount: async () => {
-      if (!supabase) return;
+      if (!supabase || !user) return;
+      // Storage files can't be removed from SQL, so delete the photos first.
+      const bucket = supabase.storage.from('pizza-images');
+      const { data: files } = await bucket.list(user.id, { limit: 1000 });
+      if (files && files.length > 0) {
+        const { error: removeError } = await bucket.remove(files.map((f) => `${user.id}/${f.name}`));
+        if (removeError) throw removeError;
+      }
       const { error } = await supabase.rpc('delete_my_account');
       if (error) throw error;
       await supabase.auth.signOut();

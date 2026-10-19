@@ -5,6 +5,9 @@ import PartyMode from './components/PartyMode';
 import Navigation from './components/Navigation';
 import PrivacyPage from './components/PrivacyPage';
 import Footer from './components/Footer';
+import Community from './components/Community';
+import PizzaPage from './components/PizzaPage';
+import AdminPage from './components/AdminPage';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -19,6 +22,9 @@ function App() {
               <Route path="/" element={<PizzaCalculator />} />
               <Route path="/party-mode" element={<PartyMode />} />
               <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/pizza/:id" element={<PizzaPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Routes>
             <Footer />
           </div>

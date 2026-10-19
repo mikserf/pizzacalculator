@@ -17,10 +17,11 @@ import {
   Upload,
 } from 'lucide-react';
 import jsPDF from 'jspdf';
+import { Link } from 'react-router-dom';
 import PizzaEditor, { PhotoChange } from './PizzaEditor';
 import { deletePhoto, photoUrl, uploadPhoto } from '../lib/photos';
 import { imageToJpegDataUrl } from '../lib/image';
-import { usePizzaStore, isMyPizza, newPizzaId } from '../hooks/usePizzaStore';
+import { usePizzaStore, isMyPizza, isValidPizza, newPizzaId } from '../hooks/usePizzaStore';
 import { useAuth } from '../contexts/AuthContext';
 
 interface IngredientTotal {
@@ -156,6 +157,7 @@ const UI = {
     edit: 'Redigera',
     copyToMine: 'Kopiera till mina pizzor',
     copyName: (n: string) => `${n} (kopia)`,
+    shared: 'Delad',
     exportMine: 'Exportera',
     importMine: 'Importera',
     imported: (n: number) => `${n} ${n === 1 ? 'pizza importerad' : 'pizzor importerade'}`,
@@ -220,6 +222,7 @@ const UI = {
     edit: 'Edit',
     copyToMine: 'Copy to my pizzas',
     copyName: (n: string) => `${n} (copy)`,
+    shared: 'Shared',
     exportMine: 'Export',
     importMine: 'Import',
     imported: (n: number) => `${n} ${n === 1 ? 'pizza imported' : 'pizzas imported'}`,
@@ -327,7 +330,9 @@ const PartyMode: React.FC = () => {
         const hydratedPizzas = parsedPizzas
           .map((saved: { id: PizzaId; quantity: number }) => {
             const full = pizzas.find((p) => p.id === saved.id);
-            return full ? { ...full, quantity: saved.quantity } : null;
+            if (full) return { ...full, quantity: saved.quantity };
+            // Community pizzas aren't in your own list — keep the saved copy.
+            return isValidPizza(saved) ? saved : null;
           })
           .filter(Boolean);
         setSelectedPizzas(hydratedPizzas);
@@ -906,6 +911,14 @@ const PartyMode: React.FC = () => {
               <h3 className="line-clamp-2 break-words font-display text-base font-bold text-ink dark:text-char-100">
                 {pizza.name}
               </h3>
+              {own && pizza.isPublic && (
+                <Link
+                  to={`/pizza/${pizza.id}`}
+                  className="shrink-0 rounded-full border border-brand-400 px-2 py-0.5 font-mono text-[0.625rem] font-medium uppercase tracking-wider text-brand-700 transition-colors hover:bg-brand-50 dark:border-brand-400/60 dark:text-brand-300 dark:hover:bg-brand-900/30"
+                >
+                  {u.shared}
+                </Link>
+              )}
             </div>
             {pizza.description[lang] && (
               <p className="mt-0.5 line-clamp-2 font-display text-sm italic text-ink-muted dark:text-char-400">

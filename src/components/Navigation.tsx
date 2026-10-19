@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Moon, Sun, Calculator, PartyPopper } from 'lucide-react';
+import { Menu, X, Moon, Sun, Calculator, PartyPopper, Users } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import AccountMenu from './AccountMenu';
 
 const links = [
   { to: '/', label: 'Calculator', Icon: Calculator },
   { to: '/party-mode', label: 'Party Mode', Icon: PartyPopper },
+  { to: '/community', label: 'Community', Icon: Users },
 ];
 
 const linkBase = 'transition-colors duration-200';
@@ -20,7 +21,8 @@ const Navigation: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
 
   const closeMenu = () => setIsMenuOpen(false);
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) =>
+    location.pathname === path || (path === '/community' && location.pathname.startsWith('/pizza/'));
 
   const themeButton = (
     <button
