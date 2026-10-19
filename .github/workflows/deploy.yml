@@ -24,6 +24,15 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          # Public Supabase keys (Settings → Secrets and variables → Actions).
+          # If unset, the site builds in local-only mode without login.
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      - name: SPA fallback for client-side routes
+        # GitHub Pages serves 404.html for unknown paths, so deep links like
+        # /party-mode and the Google login redirect load the app instead of a 404.
+        run: cp dist/index.html dist/404.html
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

@@ -1,10 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;1,400&family=Poppins:wght@400;500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    overflow-y: scroll;
+  }
+}
+
 body {
   font-family: 'Poppins', sans-serif;
+}
+
+/* Faint paper grain across the page, matching the recipe ticket stock */
+.page-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dark .page-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .font-display {
@@ -22,59 +37,541 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* Custom styling for the range slider */
-.pizza-slider {
-  -webkit-appearance: none;
-  appearance: none;
+/* Replace your existing .force-light styles with this block */
+
+/*
+  This class is temporarily added via JavaScript before PDF generation.
+  It overrides any dark-theme styles to ensure the PDF is always light.
+  The `!important` rule is necessary to win against Tailwind's utility classes.
+*/
+.force-light {
+  background-color: #ffffff !important;
+  color: #111827 !important; /* text-gray-900 */
+  border-color: #e5e7eb !important; /* border-gray-200 */
+}
+
+/* === Recipe ticket (pizzeria order docket / printed receipt) === */
+
+.recipe-ticket {
+  filter: drop-shadow(0 1px 1px rgba(60, 40, 20, 0.08)) drop-shadow(0 14px 28px rgba(60, 40, 20, 0.16));
+  animation: ticket-print 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.recipe-ticket-paper {
+  --ticket-paper: #F7EEDC;
+  --ticket-ink: #2B2622;
+  --ticket-accent: #B9521A;
+  --ticket-stamp: #B3261E;
+  --ticket-muted: #8A7863;
+  --ticket-rule: #D6C29E;
+  --ticket-edge: 22px;
+  --ticket-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --ticket-serif: 'Playfair Display', Georgia, serif;
+  --ticket-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  position: relative;
+  background-color: var(--ticket-paper);
+  color: var(--ticket-ink);
+  padding: calc(var(--ticket-edge) + 22px) clamp(20px, 6vw, 34px);
+  font-family: var(--ticket-mono);
+  /* noise + a soft light fall-off so the paper feels slightly curled */
+  background-image:
+    var(--ticket-noise),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 22%, rgba(120, 90, 50, 0) 70%, rgba(120, 90, 50, 0.07) 100%),
+    linear-gradient(90deg, rgba(120, 90, 50, 0.05) 0%, rgba(120, 90, 50, 0) 6%, rgba(120, 90, 50, 0) 94%, rgba(120, 90, 50, 0.05) 100%);
+
+  /* Fine zig-zag tear on the top and bottom edges */
+  -webkit-mask-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='28' viewBox='0 0 800 28' preserveAspectRatio='none'%3E%3Cpath d='M0 14 L26.9 6.6 L50.8 20.0 L69.1 7.2 L87.8 19.5 L107.9 7.4 L133.7 20.2 L166.9 7.8 L184.6 20.1 L208.1 7.5 L240.7 20.0 L265.2 6.5 L282.3 19.9 L303.7 8.6 L325.0 20.7 L357.5 7.9 L376.4 21.4 L396.0 8.1 L423.6 20.1 L445.3 7.2 L472.0 21.5 L501.0 6.2 L527.1 20.7 L560.3 6.9 L592.3 21.0 L612.7 8.1 L639.2 19.5 L667.2 6.1 L687.6 20.9 L716.4 8.3 L746.5 21.3 L776.1 6.6 L796.6 19.5 L800.0 14.0 L800 28 L0 28 Z' fill='black'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='28' viewBox='0 0 800 28' preserveAspectRatio='none'%3E%3Cpath d='M0 14 L33.3 19.7 L59.6 6.5 L84.8 20.1 L118.5 6.2 L137.3 20.5 L154.0 7.2 L183.1 21.9 L203.7 7.7 L228.9 19.8 L253.4 8.3 L272.3 21.3 L289.0 7.7 L314.7 21.4 L347.3 9.0 L375.1 19.1 L408.4 8.4 L436.0 20.6 L464.3 6.2 L480.9 20.5 L509.0 8.1 L534.3 20.2 L550.5 7.9 L580.5 20.5 L601.6 8.4 L622.7 21.4 L640.7 7.5 L664.2 20.7 L689.8 7.7 L717.2 20.7 L743.5 6.6 L772.5 19.6 L800.0 14.0 L800 0 L0 0 Z' fill='black'/%3E%3C/svg%3E"),
+    linear-gradient(#000, #000);
+  -webkit-mask-position: top, bottom, center;
+  -webkit-mask-size: 100% var(--ticket-edge), 100% var(--ticket-edge), 100% calc(100% - var(--ticket-edge) * 2 + 2px);
+  -webkit-mask-repeat: no-repeat, no-repeat, no-repeat;
+
+  mask-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='28' viewBox='0 0 800 28' preserveAspectRatio='none'%3E%3Cpath d='M0 14 L26.9 6.6 L50.8 20.0 L69.1 7.2 L87.8 19.5 L107.9 7.4 L133.7 20.2 L166.9 7.8 L184.6 20.1 L208.1 7.5 L240.7 20.0 L265.2 6.5 L282.3 19.9 L303.7 8.6 L325.0 20.7 L357.5 7.9 L376.4 21.4 L396.0 8.1 L423.6 20.1 L445.3 7.2 L472.0 21.5 L501.0 6.2 L527.1 20.7 L560.3 6.9 L592.3 21.0 L612.7 8.1 L639.2 19.5 L667.2 6.1 L687.6 20.9 L716.4 8.3 L746.5 21.3 L776.1 6.6 L796.6 19.5 L800.0 14.0 L800 28 L0 28 Z' fill='black'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='28' viewBox='0 0 800 28' preserveAspectRatio='none'%3E%3Cpath d='M0 14 L33.3 19.7 L59.6 6.5 L84.8 20.1 L118.5 6.2 L137.3 20.5 L154.0 7.2 L183.1 21.9 L203.7 7.7 L228.9 19.8 L253.4 8.3 L272.3 21.3 L289.0 7.7 L314.7 21.4 L347.3 9.0 L375.1 19.1 L408.4 8.4 L436.0 20.6 L464.3 6.2 L480.9 20.5 L509.0 8.1 L534.3 20.2 L550.5 7.9 L580.5 20.5 L601.6 8.4 L622.7 21.4 L640.7 7.5 L664.2 20.7 L689.8 7.7 L717.2 20.7 L743.5 6.6 L772.5 19.6 L800.0 14.0 L800 0 L0 0 Z' fill='black'/%3E%3C/svg%3E"),
+    linear-gradient(#000, #000);
+  mask-position: top, bottom, center;
+  mask-size: 100% var(--ticket-edge), 100% var(--ticket-edge), 100% calc(100% - var(--ticket-edge) * 2 + 2px);
+  mask-repeat: no-repeat, no-repeat, no-repeat;
+}
+
+.dark .recipe-ticket {
+  filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.55));
+}
+
+.dark .recipe-ticket-paper {
+  --ticket-paper: #27221E;
+  --ticket-ink: #F1E7D6;
+  --ticket-accent: #F0A35E;
+  --ticket-stamp: #E8705F;
+  --ticket-muted: #A3927F;
+  --ticket-rule: #4A4037;
+  --ticket-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image:
+    var(--ticket-noise),
+    linear-gradient(180deg, rgba(255, 240, 220, 0.05) 0%, rgba(255, 240, 220, 0) 25%);
+}
+
+/* --- Masthead --- */
+
+.ticket-masthead {
+  text-align: center;
+}
+
+.ticket-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.ticket-label,
+.ticket-colheads,
+.ticket-total-label {
+  font-family: var(--ticket-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ticket-label {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--ticket-muted);
+}
+
+.ticket-title {
+  font-family: var(--ticket-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 1.1;
+  color: var(--ticket-ink);
+}
+
+.ticket-subtitle {
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ticket-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-subtitle span {
+  color: var(--ticket-muted);
+  font-weight: 500;
+}
+
+/* --- Rules --- */
+
+.ticket-rule {
+  border-top: 1px dashed var(--ticket-rule);
+  margin: 18px 0;
+}
+
+.ticket-rule--double {
+  height: 4px;
+  border-top: 1px solid var(--ticket-ink);
+  border-bottom: 1px solid var(--ticket-ink);
+  opacity: 0.75;
+  margin: 18px 0 14px;
+}
+
+/* --- Ingredient table --- */
+
+.ticket-colheads {
+  display: flex;
+  gap: 10px;
+  font-size: 0.5625rem;
+  color: var(--ticket-muted);
+  margin-bottom: 6px;
+}
+
+.ticket-colheads span:first-child { flex: 1 1 auto; }
+.ticket-colheads span:nth-child(2) { width: 3.25rem; text-align: right; }
+.ticket-colheads span:nth-child(3) { width: 5.25rem; text-align: right; }
+
+.ticket-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ticket-item {
+  padding: 8px 0;
+}
+
+.ticket-item-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.ticket-item-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ticket-ink);
+}
+
+.ticket-item-name svg {
+  flex-shrink: 0;
+  color: var(--ticket-accent);
+}
+
+.ticket-italian {
+  display: block;
+  font-family: var(--ticket-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.8125rem;
+  color: var(--ticket-muted);
+}
+
+.ticket-leader {
+  flex: 1 1 auto;
+  min-width: 8px;
+  border-bottom: 1px dotted var(--ticket-rule);
+  margin-bottom: 5px;
+}
+
+.ticket-item-pct {
+  width: 3.25rem;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--ticket-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-item-value {
+  width: 5.25rem;
+  text-align: right;
+  font-weight: 600;
+  font-size: 1.0625rem;
+  color: var(--ticket-accent);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  animation: ticket-ink 0.45s ease-out;
+}
+
+.ticket-item-sub {
+  margin: 2px 0 0 26px;
+  font-size: 0.6875rem;
+  color: var(--ticket-muted);
+}
+
+/* --- Total + stamp --- */
+
+.ticket-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ticket-total-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--ticket-ink);
+}
+
+.ticket-total-value {
+  display: block;
+  font-family: var(--ticket-serif);
+  font-weight: 700;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  color: var(--ticket-accent);
+  font-variant-numeric: tabular-nums lining-nums;
+  animation: ticket-ink 0.45s ease-out;
+}
+
+.ticket-stamp {
+  width: 92px;
+  height: 92px;
+  flex-shrink: 0;
+  margin: -10px -4px -10px 0;
+  color: var(--ticket-stamp);
+  font-family: var(--ticket-mono);
+  opacity: 0.82;
+  transform: rotate(-14deg);
+  mix-blend-mode: multiply;
+}
+
+.dark .ticket-stamp {
+  mix-blend-mode: normal;
+  opacity: 0.8;
+}
+
+/* --- Timeline --- */
+
+.ticket-timeline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ticket-timeline-point {
+  display: flex;
+  flex-direction: column;
+  min-width: 4.25rem;
+}
+
+.ticket-timeline-point--end {
+  text-align: right;
+}
+
+.ticket-timeline-time {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-timeline-day {
+  font-size: 0.6875rem;
+  color: var(--ticket-muted);
+}
+
+.ticket-timeline-track {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ticket-timeline-line {
+  position: relative;
   width: 100%;
-  height: 8px;
-  background: #e0e0e0;
-  border-radius: 5px;
-  outline: none;
-  opacity: 0.7;
-  transition: opacity 0.2s;
+  border-top: 1px solid var(--ticket-ink);
+  opacity: 0.6;
 }
 
-.dark .pizza-slider {
-  background: #4b5563;
+.ticket-timeline-line::before,
+.ticket-timeline-line::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--ticket-paper);
+  border: 1px solid var(--ticket-ink);
 }
 
-.pizza-slider:hover {
-  opacity: 1;
+.ticket-timeline-line::before { left: 0; }
+.ticket-timeline-line::after { right: 0; background: var(--ticket-ink); }
+
+.ticket-timeline-duration {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ticket-accent);
 }
 
-.pizza-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 24px;
-  height: 24px;
-  background: #EA580C;
-  cursor: pointer;
-  border-radius: 50%;
+.ticket-timeline-detail {
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  color: var(--ticket-muted);
 }
 
-.dark .pizza-slider::-webkit-slider-thumb {
-  background: #fb923c;
+.ticket-warning {
+  text-align: center;
+  font-family: var(--ticket-serif);
+  font-style: italic;
+  color: var(--ticket-stamp);
 }
 
-.pizza-slider::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  background: #EA580C;
-  cursor: pointer;
-  border-radius: 50%;
-  border: none;
+.ticket-note {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--ticket-rule);
 }
 
-.dark .pizza-slider::-moz-range-thumb {
-  background: #fb923c;
+.ticket-note-value {
+  font-family: var(--ticket-serif);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--ticket-accent);
+  font-variant-numeric: tabular-nums;
 }
 
-/* Horizontal scroll utility for chip lists */
-.horizontal-scroll {
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+/* --- Footer --- */
+
+.ticket-foot {
+  margin-top: 22px;
+  text-align: center;
 }
-.horizontal-scroll::-webkit-scrollbar {
-  display: none;
+
+.ticket-barcode {
+  display: block;
+  width: 70%;
+  height: 34px;
+  margin: 0 auto;
+  color: var(--ticket-ink);
+  opacity: 0.85;
+}
+
+.ticket-sign {
+  margin-top: 10px;
+  font-family: var(--ticket-serif);
+  font-style: italic;
+  font-size: 0.9375rem;
+  color: var(--ticket-muted);
+}
+
+.ticket-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  color: var(--ticket-muted);
+}
+
+.ticket-footer-line {
+  flex: 1 1 auto;
+  border-top: 1px dashed var(--ticket-rule);
+}
+
+/* --- Actions under the ticket --- */
+
+.ticket-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.ticket-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  border: 1px solid #D6C29E;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #7A391C;
+  background: transparent;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.ticket-action:hover:not(:disabled) {
+  background: #F6E7D7;
+  border-color: #D78A48;
+}
+
+.ticket-action:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.ticket-action:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.dark .ticket-action {
+  border-color: #4A4037;
+  color: #F0C9A0;
+}
+
+.dark .ticket-action:hover:not(:disabled) {
+  background: #27221E;
+  border-color: #F0A35E;
+}
+
+/* --- Motion --- */
+
+@keyframes ticket-print {
+  from { opacity: 0; transform: translateY(-14px); clip-path: inset(0 0 100% 0); }
+  to { opacity: 1; transform: translateY(0); clip-path: inset(0 0 0 0); }
+}
+
+@keyframes ticket-ink {
+  from { opacity: 0.2; filter: blur(1.5px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recipe-ticket,
+  .ticket-item-value,
+  .ticket-total-value {
+    animation: none;
+  }
+}
+
+/* --- Print: only the ticket --- */
+
+@media print {
+  body * { visibility: hidden; }
+  .recipe-ticket,
+  .recipe-ticket * { visibility: visible; }
+  .recipe-ticket {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 92mm;
+    transform: translateX(-50%);
+    filter: none;
+    animation: none;
+  }
+  .recipe-ticket-paper {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* === Overrides for Child Elements within the Previews === */
+
+/* General text colors */
+.force-light .text-gray-100,
+.force-light .dark\:text-white,
+.force-light .dark\:text-gray-100 {
+  color: #111827 !important;
+}
+
+.force-light .text-gray-600,
+.force-light .dark\:text-gray-400 {
+  color: #4b5563 !important;
+}
+
+.force-light .text-gray-800 {
+  color: #1f2937 !important;
+}
+
+/* Backgrounds for inner boxes - keeps intentional shades */
+.force-light .bg-gray-50 {
+  background-color: #f9fafb !important;
+}
+.force-light .bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Borders */
+.force-light .border-gray-700 {
+  border-color: #e5e7eb !important;
+}
+
+/* Override dark mode background on the preview root itself */
+.force-light.bg-gray-900 {
+  background-color: #ffffff !important;
+}
+
+/* Preserve important accent colors */
+.force-light .bg-orange-100 {
+    background-color: #ffedd5 !important;
+}
+.force-light .text-\[\#D2691E\], .force-light .text-orange-500 {
+    color: #D2691E !important;
 }

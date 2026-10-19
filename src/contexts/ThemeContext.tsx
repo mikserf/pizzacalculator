@@ -33,12 +33,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
                           document.querySelector('meta[name="theme-color"]');
     
     if (themeColorMeta) {
-      themeColorMeta.setAttribute('content', isDark ? '#111827' : '#F8F7F4');
+      themeColorMeta.setAttribute('content', isDark ? '#1A1714' : '#EDE6DA');
     } else {
       // Create meta tag if it doesn't exist
       const meta = document.createElement('meta');
       meta.name = 'theme-color';
-      meta.content = isDark ? '#111827' : '#F8F7F4';
+      meta.content = isDark ? '#1A1714' : '#EDE6DA';
       document.head.appendChild(meta);
     }
     

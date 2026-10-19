@@ -1,0 +1,164 @@
+{
+  "pizzas": [
+    {
+      "id": 1,
+      "name": "No1",
+      "description": {
+        "sv": "Klassisk pizza med salami, mozzarella di bufala, tomatsås och basilika.",
+        "en": "Classic salami and mozzarella di bufala pizza with tomato sauce and basil."
+      },
+      "ingredients": [
+        { "name": { "sv": "Tomatsås (San Marzano)", "en": "Tomato sauce (San Marzano)" }, "amount": 55, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Salami", "en": "Salami (fine cut)" }, "amount": 15, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Mozzarella di bufala DOP", "en": "Mozzarella di bufala DOP" }, "amount": 65, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Parmigiano", "en": "Parmigiano" }, "amount": 20, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Torkad oregano", "en": "Dried oregano" }, "amount": 1.5, "unit": { "sv": "nypor", "en": "pinches" } },
+        { "name": { "sv": "Basilikablad", "en": "Basil leaves" }, "amount": 2.5, "unit": { "sv": "blad", "en": "leaves" }, "note": { "sv": "2–3 blad", "en": "2–3 leaves" } }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "No2",
+      "description": {
+        "sv": "Krämig vit pizza med färska champinjoner, vitlök och en skvätt tryffelolja.",
+        "en": "Creamy white-base pizza with fresh mushrooms, garlic, and a touch of truffle oil."
+      },
+      "ingredients": [
+        { "name": { "sv": "Crème fraîche", "en": "Crème fraîche" }, "amount": 20, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Mozzarella", "en": "Mozzarella" }, "amount": 55, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Färska champinjoner", "en": "Fresh mushrooms" }, "amount": 25, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Vitlök", "en": "Garlic" }, "amount": 2, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Pecorino Romano", "en": "Pecorino Romano" }, "amount": 4, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Olivolja", "en": "Olive oil" }, "amount": 5, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Persilja", "en": "Parsley" }, "amount": 2, "unit": { "sv": "nypor", "en": "pinches" } },
+        { "name": { "sv": "Tryffelolja", "en": "Truffle oil" }, "amount": 3, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Salt", "en": "Salt" }, "amount": 1, "unit": { "sv": "nypa", "en": "pinch" } },
+        { "name": { "sv": "Svartpeppar", "en": "Black pepper" }, "amount": 1, "unit": { "sv": "nypa", "en": "pinch" } }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "No3",
+      "description": {
+        "sv": "Tomatsås, oregano, vitlök, basilika och oliver – helt utan ost.",
+        "en": "Tomato sauce, oregano, garlic, basil and olives – completely cheese-free."
+      },
+      "ingredients": [
+        { "name": { "sv": "Tomatsås (San Marzano)", "en": "Tomato sauce (San Marzano)" }, "amount": 55, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Oregano", "en": "Oregano" }, "amount": 1.5, "unit": { "sv": "nypor", "en": "pinches" } },
+        { "name": { "sv": "Vitlök", "en": "Garlic" }, "amount": 2, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Basilika", "en": "Basil" }, "amount": 2.5, "unit": { "sv": "blad", "en": "leaves" }, "note": { "sv": "2–3 blad", "en": "2–3 leaves" } },
+        { "name": { "sv": "Oliver", "en": "Olives" }, "amount": 20, "unit": { "sv": "gram", "en": "grams" } }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "No4",
+      "description": {
+        "sv": "Tomatsås och mozzarella med basilika, pecorino och olivolja. Lägg till nduja för extra sting.",
+        "en": "Tomato sauce and mozzarella with basil, pecorino and olive oil. Add nduja for extra kick."
+      },
+      "ingredients": [
+        { "name": { "sv": "Tomatsås (San Marzano)", "en": "Tomato sauce (San Marzano)" }, "amount": 55, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Mozzarella", "en": "Mozzarella" }, "amount": 65, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Basilika", "en": "Basil" }, "amount": 2.5, "unit": { "sv": "blad", "en": "leaves" }, "note": { "sv": "2–3 blad", "en": "2–3 leaves" } },
+        { "name": { "sv": "Pecorino", "en": "Pecorino" }, "amount": 15, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Olivolja", "en": "Olive oil" }, "amount": 5, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Nduja", "en": "Nduja" }, "amount": 20, "unit": { "sv": "gram", "en": "grams" }, "note": { "sv": "Lägg till", "en": "Add on request" } }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "No5",
+      "description": {
+        "sv": "Vit bas med pecorino, pancetta, basilika och olivolja – ingen tomatsås.",
+        "en": "White base with pecorino, pancetta, basil and olive oil – no tomato sauce."
+      },
+      "ingredients": [
+        { "name": { "sv": "Vitlök", "en": "Garlic" }, "amount": 2, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Pecorino", "en": "Pecorino" }, "amount": 25, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Pancetta", "en": "Pancetta" }, "amount": 20, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Basilika", "en": "Basil" }, "amount": 2.5, "unit": { "sv": "blad", "en": "leaves" }, "note": { "sv": "2–3 blad", "en": "2–3 leaves" } },
+        { "name": { "sv": "Olivolja", "en": "Olive oil" }, "amount": 5, "unit": { "sv": "gram", "en": "grams" } }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "No6",
+      "description": {
+        "sv": "Tomatsås och mozzarella med salami, gräddost, oregano och basilika.",
+        "en": "Tomato sauce and mozzarella with salami, cream cheese, oregano and basil."
+      },
+      "ingredients": [
+        { "name": { "sv": "Tomatsås (San Marzano)", "en": "Tomato sauce (San Marzano)" }, "amount": 55, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Mozzarella", "en": "Mozzarella" }, "amount": 60, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Salami", "en": "Salami" }, "amount": 15, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Gräddost", "en": "Cream cheese" }, "amount": 25, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Oregano", "en": "Oregano" }, "amount": 1.5, "unit": { "sv": "nypor", "en": "pinches" } },
+        { "name": { "sv": "Basilika", "en": "Basil" }, "amount": 2.5, "unit": { "sv": "blad", "en": "leaves" }, "note": { "sv": "2–3 blad", "en": "2–3 leaves" } }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "No7",
+      "description": {
+        "sv": "Tomatsås med sardeller, körsbärstomater, vitlök, oliver, kapris och basilika – utan ost.",
+        "en": "Tomato sauce with anchovies, cherry tomatoes, garlic, olives, capers and basil – cheese-free."
+      },
+      "ingredients": [
+        { "name": { "sv": "Tomatsås (San Marzano)", "en": "Tomato sauce (San Marzano)" }, "amount": 55, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Sardeller", "en": "Anchovies" }, "amount": 10, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Körsbärstomater", "en": "Cherry tomatoes" }, "amount": 30, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Vitlök", "en": "Garlic" }, "amount": 2, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Oliver", "en": "Olives" }, "amount": 15, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Kapris", "en": "Capers" }, "amount": 8, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Basilika", "en": "Basil" }, "amount": 2.5, "unit": { "sv": "blad", "en": "leaves" }, "note": { "sv": "2–3 blad", "en": "2–3 leaves" } }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "No8",
+      "description": {
+        "sv": "Vit bas med mozzarella, speck, parmesan, rödlök och svampolja – ingen tomatsås.",
+        "en": "White base with mozzarella, speck, parmesan, red onion and mushroom oil – no tomato sauce."
+      },
+      "ingredients": [
+        { "name": { "sv": "Mozzarella", "en": "Mozzarella" }, "amount": 60, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Speck", "en": "Speck" }, "amount": 20, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Parmesan", "en": "Parmesan" }, "amount": 20, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Rödlök", "en": "Red onion" }, "amount": 15, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Svampolja", "en": "Mushroom oil" }, "amount": 5, "unit": { "sv": "gram", "en": "grams" } }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "No9",
+      "description": {
+        "sv": "Dessertpizza med Nutella, mascarpone, hasselnötter, vaniljglass och bär.",
+        "en": "Dessert pizza with Nutella, mascarpone, hazelnuts, vanilla ice cream and berries."
+      },
+      "ingredients": [
+        { "name": { "sv": "Nutella", "en": "Nutella" }, "amount": 40, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Mascarpone", "en": "Mascarpone" }, "amount": 30, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Hasselnötter", "en": "Hazelnuts" }, "amount": 15, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Vaniljglass", "en": "Vanilla ice cream" }, "amount": 50, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Bär", "en": "Berries" }, "amount": 30, "unit": { "sv": "gram", "en": "grams" } }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "No10",
+      "description": {
+        "sv": "Tomatsås och mozzarella med gräddost, späck och oregano – barnvänlig.",
+        "en": "Tomato sauce and mozzarella with cream cheese, lard and oregano – kid-friendly."
+      },
+      "ingredients": [
+        { "name": { "sv": "Tomatsås (San Marzano)", "en": "Tomato sauce (San Marzano)" }, "amount": 55, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Mozzarella", "en": "Mozzarella" }, "amount": 60, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Gräddost", "en": "Cream cheese" }, "amount": 25, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Späck", "en": "Lard" }, "amount": 15, "unit": { "sv": "gram", "en": "grams" } },
+        { "name": { "sv": "Oregano", "en": "Oregano" }, "amount": 1.5, "unit": { "sv": "nypor", "en": "pinches" } }
+      ]
+    }
+  ]
+}
