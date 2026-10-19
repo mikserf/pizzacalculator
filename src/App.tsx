@@ -4,6 +4,7 @@ import PizzaCalculator from './components/PizzaCalculator';
 import PartyMode from './components/PartyMode';
 import Navigation from './components/Navigation';
 import PrivacyPage from './components/PrivacyPage';
+import Footer from './components/Footer';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -19,6 +20,7 @@ function App() {
               <Route path="/party-mode" element={<PartyMode />} />
               <Route path="/privacy" element={<PrivacyPage />} />
             </Routes>
+            <Footer />
           </div>
         </Router>
       </AuthProvider>
