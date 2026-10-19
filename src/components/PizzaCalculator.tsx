@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PizzaState } from '../types/pizza';
 import { getDefaultBakeTime, calculateRecipe } from '../utils/calculations';
 import CalculatorControls from './CalculatorControls';
 import RecipeDisplay from './RecipeDisplay';
+import BakeProtocol from './BakeProtocol';
 import { useLang } from '../hooks/useLang';
+import { searchFromState, stateFromSearch } from '../lib/recipeLink';
 
 const T = {
   // \u00AD = soft hyphen: lets "Pizzadegs-kalkylator" break on narrow phones.
@@ -12,7 +14,8 @@ const T = {
 } as const;
 
 const PizzaCalculator: React.FC = () => {
-  const [state, setState] = useState<PizzaState>({
+  // Defaults, overridden by a shared recipe link (?w=…&h=…) if there is one.
+  const [defaults] = useState<PizzaState>(() => ({
     doughBallWeight: 265,
     numPizzas: 6,
     bakeTime: getDefaultBakeTime(),
@@ -26,7 +29,17 @@ const PizzaCalculator: React.FC = () => {
     isColdFerment: false,
     coldFermentHours: 24,
     fridgeTemp: 4,
-  });
+  }));
+  const [state, setState] = useState<PizzaState>(() => ({ ...defaults, ...stateFromSearch(window.location.search) }));
+
+  // Keep the address in sync, so the current recipe can be shared or bookmarked.
+  useEffect(() => {
+    const qs = searchFromState(state, defaults);
+    const next = `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`;
+    if (next !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      window.history.replaceState(window.history.state, '', next);
+    }
+  }, [state, defaults]);
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const t = T[useLang()];
@@ -57,6 +70,8 @@ const PizzaCalculator: React.FC = () => {
         />
         <RecipeDisplay state={state} recipe={recipe} showAdvanced={showAdvanced} />
       </div>
+
+      <BakeProtocol state={state} recipe={recipe} />
     </div>
   );
 };

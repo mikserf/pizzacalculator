@@ -15,6 +15,7 @@ const T = {
     googleItems: [
       'din e-postadress, så att du kan logga in (den visas aldrig för andra);',
       'pizzorna du skapar (namn, beskrivning, ingredienser och foto);',
+      'degprotokoll du sparar (privata, syns bara för dig);',
       'betygen du ger, och eventuella anmälningar du skickar.',
     ],
     googleNever:
@@ -37,7 +38,7 @@ const T = {
       'Du kan se och ändra dina pizzor i Party Mode när som helst, och exportera dem som en fil. Du kan radera ditt konto och all dess data nedan. Det gäller direkt och kan inte ångras.',
     deleteTitle: 'Radera mitt konto och min data',
     deleteBody:
-      'Detta raderar ditt konto och allt som sparats på det permanent: dina pizzor och foton (även delade), betyg och anmälningar. Pizzor som bara finns på den här enheten påverkas inte.',
+      'Detta raderar ditt konto och allt som sparats på det permanent: dina pizzor och foton (även delade), degprotokoll, betyg och anmälningar. Pizzor som bara finns på den här enheten påverkas inte.',
     deleteConfirm: 'Skriv RADERA för att bekräfta',
     deleteWord: 'RADERA',
     deleteButton: 'Radera konto',
@@ -54,6 +55,7 @@ const T = {
     googleItems: [
       'your email address, so you can sign in (it is never shown to others);',
       'the pizzas you create (name, description, ingredients and photo);',
+      'dough logs you save (private, only visible to you);',
       'the star ratings you give, and any reports you send.',
     ],
     googleNever:
@@ -76,7 +78,7 @@ const T = {
       'You can view and edit your pizzas in Party Mode at any time, and export them as a file. You can delete your account and all its data below. It takes effect immediately and cannot be undone.',
     deleteTitle: 'Delete my account and data',
     deleteBody:
-      'This permanently deletes your account and everything saved to it: your pizzas and photos (including shared ones), ratings and reports. Pizzas saved only on this device are not affected.',
+      'This permanently deletes your account and everything saved to it: your pizzas and photos (including shared ones), dough logs, ratings and reports. Pizzas saved only on this device are not affected.',
     deleteConfirm: 'Type DELETE to confirm',
     deleteWord: 'DELETE',
     deleteButton: 'Delete account',

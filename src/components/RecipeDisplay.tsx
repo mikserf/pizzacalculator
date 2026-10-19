@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Wheat, Droplet, Diamond, FlaskConical, Scissors, Copy, Check, Printer } from 'lucide-react';
+import { Wheat, Droplet, Diamond, FlaskConical, Scissors, Copy, Check, Printer, Share2 } from 'lucide-react';
 import { PizzaState, RecipeResult } from '../types/pizza';
 import { useLang } from '../hooks/useLang';
 
@@ -23,6 +23,9 @@ const T = {
     waterAt: 'Blanda med vatten på',
     copy: 'Kopiera recept',
     copied: 'Kopierat',
+    share: 'Dela recept',
+    linkCopied: 'Länk kopierad',
+    shareTitle: 'Pizzadegsrecept',
     print: 'Skriv ut',
     test: 'test',
     plainTitle: 'PIZZADEG',
@@ -52,6 +55,9 @@ const T = {
     waterAt: 'Mix with water at',
     copy: 'Copy recipe',
     copied: 'Copied',
+    share: 'Share recipe',
+    linkCopied: 'Link copied',
+    shareTitle: 'Pizza dough recipe',
     print: 'Print',
     test: 'test',
     plainTitle: 'PIZZA DOUGH',
@@ -178,6 +184,7 @@ function HydrationStamp({ hydration }: { hydration: number }) {
 
 const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanced = false }) => {
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const t = T[useLang()];
   const { numPizzas, doughBallWeight, waterPercent, saltPercent, testTubeDough, isColdFerment } = state;
 
@@ -214,10 +221,30 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
     `${t.plainFerment.padEnd(13)} ${formatDuration(recipe.fermentationTime)}${isColdFerment ? t.plainColdAt(state.coldFermentHours, state.fridgeTemp) : t.plainAt(state.roomTemp)}`,
     showAdvanced ? `${t.plainWater.padEnd(13)} ${recipe.requiredWaterTemp.toFixed(1)}°C` : '',
     '',
-    'pizzacalculator.se',
+    window.location.href,
   ]
     .filter((l, i, arr) => !(l === '' && arr[i - 1] === ''))
     .join('\n');
+
+  /** Phone share sheet where available; otherwise copy the link (it holds the whole recipe). */
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (typeof navigator.share === 'function') {
+      try {
+        await navigator.share({ title: t.shareTitle, text: `${numPizzas} × ${doughBallWeight} g`, url });
+        return;
+      } catch (err) {
+        if ((err as DOMException)?.name === 'AbortError') return; // user closed the sheet
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      window.setTimeout(() => setLinkCopied(false), 1800);
+    } catch {
+      /* clipboard unavailable — ignore */
+    }
+  };
 
   const handleCopy = async () => {
     try {
@@ -347,6 +374,10 @@ const RecipeDisplay: React.FC<RecipeDisplayProps> = ({ state, recipe, showAdvanc
         <button type="button" onClick={handleCopy} disabled={!isValid} className="ticket-action">
           {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
           {copied ? t.copied : t.copy}
+        </button>
+        <button type="button" onClick={handleShare} disabled={!isValid} className="ticket-action">
+          {linkCopied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Share2 className="h-4 w-4" aria-hidden="true" />}
+          {linkCopied ? t.linkCopied : t.share}
         </button>
         <button type="button" onClick={() => window.print()} disabled={!isValid} className="ticket-action">
           <Printer className="h-4 w-4" aria-hidden="true" />
